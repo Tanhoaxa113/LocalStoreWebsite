@@ -150,32 +150,17 @@ export default function CheckoutPage() {
 
         setSubmitting(true);
         try {
-            // Create order first
+            // Create order - backend will generate payment URL if needed
             const { data } = await ordersAPI.createOrder(formData);
 
-            // Check if VNPAY payment method
-            if (formData.payment_method === 'vnpay_qr' || formData.payment_method === 'vnpay_card') {
-                // Determine payment type
-                const paymentType = formData.payment_method === 'vnpay_qr' ? 'qr' : 'card';
-
-                try {
-                    // Create VNPAY payment URL
-                    const paymentResponse = await vnpayAPI.createPayment(data.id, paymentType);
-
-                    if (paymentResponse.data.success && paymentResponse.data.payment_url) {
-                        // Redirect to VNPAY payment gateway
-                        window.location.href = paymentResponse.data.payment_url;
-                    } else {
-                        throw new Error(paymentResponse.data.error || 'Không thể tạo liên kết thanh toán');
-                    }
-                } catch (paymentError: any) {
-                    console.error('Error creating payment:', paymentError);
-                    alert('Không thể tạo liên kết thanh toán VNPAY. Vui lòng thử lại.');
-                    setSubmitting(false);
-                }
+            // Check if payment redirect is required
+            if (data.requires_payment && data.payment_url) {
+                // Redirect to VNPAY payment gateway
+                window.location.href = data.payment_url;
+                // Don't set submitting to false - page will redirect
             } else {
-                // For other payment methods (COD, Banking)
-                alert(`Đặt hàng thành công! Mã đơn hàng: ${data.order_number}`);
+                // COD or other payment methods - order created successfully
+                alert(`Đặt hàng thành công! Mã đơn hàng: ${data.order.order_number}`);
                 // Clear cart
                 setCart({ id: '', items: [], total_items: 0, subtotal: '0' });
                 // Redirect to orders page

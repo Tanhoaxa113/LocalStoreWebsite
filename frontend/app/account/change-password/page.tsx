@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Lock, Eye, EyeOff, Check, X } from 'lucide-react';
 import DashboardLayout from '@/components/DashboardLayout';
-import Button from '@/components/Button';
+import Button from "@/components/ui/Button";
 import { api } from '@/lib/api';
 
 interface PasswordRequirement {

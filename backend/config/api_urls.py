@@ -9,7 +9,7 @@ from apps.products.views import (
     ProductVariantViewSet, ProductReviewViewSet
 )
 from apps.carts.views import CartViewSet
-from apps.orders.views import OrderViewSet
+from apps.orders.views import OrderViewSet, VoucherViewSet
 from apps.users.views import UserProfileViewSet, UserAddressViewSet
 from apps.wishlists.views import WishlistViewSet
 
@@ -23,6 +23,7 @@ router.register(r'variants', ProductVariantViewSet, basename='variant')
 router.register(r'reviews', ProductReviewViewSet, basename='review')
 router.register(r'cart', CartViewSet, basename='cart')
 router.register(r'orders', OrderViewSet, basename='order')
+router.register(r'vouchers', VoucherViewSet, basename='voucher')
 router.register(r'profile', UserProfileViewSet, basename='profile')
 router.register(r'addresses', UserAddressViewSet, basename='address')
 router.register(r'wishlist', WishlistViewSet, basename='wishlist')

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Be_Vietnam_Pro } from "next/font/google";
 import "./globals.css";
-import TetEffects from "@/components/TetEffects";
-import ScrollBackground from "@/components/ScrollBackground";
+import TetEffects from "@/components/effects/TetEffects";
+import ScrollBackground from "@/components/effects/ScrollBackground";
 import LayoutWrapper from "@/components/LayoutWrapper";
 
 // Fonts with full Vietnamese Unicode support

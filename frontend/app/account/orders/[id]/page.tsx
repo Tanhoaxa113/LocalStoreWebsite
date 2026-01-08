@@ -3,64 +3,40 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ArrowLeft, MapPin, Package, CreditCard, Calendar, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, MapPin, Package, CreditCard, ShoppingBag, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import DashboardLayout from '@/components/DashboardLayout';
-import { api } from '@/lib/api';
-
-interface OrderItem {
-    id: number;
-    product_name: string;
-    variant_sku: string;
-    variant_details: any;
-    unit_price: string;
-    quantity: number;
-    total_price: string;
-    image?: string; // Add if available in API
-}
-
-interface ShippingAddress {
-    full_name: string;
-    phone: string;
-    full_address: string;
-    city: string;
-    country: string;
-}
-
-interface OrderDetail {
-    id: number;
-    order_number: string;
-    status: string;
-    status_display: string;
-    payment_status: string;
-    payment_status_display: string;
-    payment_method: string;
-    payment_method_display: string;
-    subtotal: string;
-    shipping_cost: string;
-    discount_amount: string;
-    total: string;
-    items: OrderItem[];
-    shipping_address: ShippingAddress;
-    created_at: string;
-    customer_note?: string;
-}
+import { OrderAPI, OrderDetail } from '@/lib/api/orders';
+import CancelOrderModal from '@/components/order/CancelOrderModal';
+import RefundRequestModal from '@/components/order/RefundRequestModal';
+import PaymentExpirationTimer from '@/components/order/PaymentExpirationTimer';
 
 const STATUS_COLORS: Record<string, string> = {
-    pending: 'bg-yellow-100 text-yellow-800',
-    confirmed: 'bg-blue-100 text-blue-800',
-    processing: 'bg-purple-100 text-purple-800',
-    shipping: 'bg-indigo-100 text-indigo-800',
-    completed: 'bg-green-100 text-green-800',
-    cancelled: 'bg-red-100 text-red-800',
-    refunded: 'bg-gray-100 text-gray-800',
+    PENDING: 'bg-yellow-100 text-yellow-800',
+    CONFIRMING: 'bg-yellow-100 text-yellow-800',
+    CONFIRMED: 'bg-blue-100 text-blue-800',
+    PROCESSING: 'bg-purple-100 text-purple-800',
+    DELIVERING: 'bg-indigo-100 text-indigo-800',
+    DELIVERED: 'bg-green-100 text-green-800',
+    COMPLETED: 'bg-green-100 text-green-800',
+    CANCELED: 'bg-red-100 text-red-800',
+    REFUND_REQUESTED: 'bg-orange-100 text-orange-800',
+    REFUNDING: 'bg-orange-100 text-orange-800',
+    REFUNDED: 'bg-gray-100 text-gray-800',
 };
 
 export default function OrderDetailsPage() {
     const params = useParams();
-    const router = useRouter();
     const [order, setOrder] = useState<OrderDetail | null>(null);
     const [loading, setLoading] = useState(true);
+    const [errorMsg, setErrorMsg] = useState('');
+
+    // Modal states
+    const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+    const [isRefundModalOpen, setIsRefundModalOpen] = useState(false);
+
+    // Processing states
+    const [isRetryingPayment, setIsRetryingPayment] = useState(false);
 
     useEffect(() => {
         if (params.id) {
@@ -70,25 +46,14 @@ export default function OrderDetailsPage() {
 
     const fetchOrderDetail = async (id: string) => {
         try {
-            const response = await api.get(`/orders/${id}/`);
-            setOrder(response.data);
+            setErrorMsg('');
+            const data = await OrderAPI.getOrderDetail(id);
+            setOrder(data);
         } catch (error) {
             console.error('Error fetching order details:', error);
-            // Handle error (e.g., redirect to orders list)
+            setErrorMsg('Không thể tải thông tin đơn hàng');
         } finally {
             setLoading(false);
-        }
-    };
-
-    const handleCancelOrder = async () => {
-        if (!order || !window.confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?')) return;
-
-        try {
-            await api.post(`/orders/${order.id}/cancel/`);
-            fetchOrderDetail(order.id.toString()); // Refresh details
-        } catch (error) {
-            console.error('Error cancelling order:', error);
-            alert('Không thể hủy đơn hàng. Vui lòng thử lại sau.');
         }
     };
 
@@ -96,19 +61,56 @@ export default function OrderDetailsPage() {
         if (!order) return;
 
         try {
-            const response = await api.post('/payments/vnpay/create/', {
-                order_id: order.id,
-                payment_type: 'qr'
-            });
+            setIsRetryingPayment(true);
+            const response = await OrderAPI.retryPayment(order.id.toString());
 
-            if (response.data.success && response.data.payment_url) {
-                window.location.href = response.data.payment_url;
+            if (response.success && response.payment_url) {
+                window.location.href = response.payment_url;
             } else {
-                alert('Không thể tạo link thanh toán. Vui lòng thử lại.');
+                alert(response.error || 'Không thể tạo link thanh toán');
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error creating payment:', error);
-            alert('Có lỗi xảy ra khi tạo thanh toán.');
+            alert(error.response?.data?.error || 'Có lỗi xảy ra khi tạo thanh toán');
+        } finally {
+            setIsRetryingPayment(false);
+        }
+    };
+
+    const handleOrderExpired = async () => {
+        // Refresh order to show cancelled status
+        if (order?.id) {
+            fetchOrderDetail(order.id.toString());
+        }
+    };
+
+    const handleCancelRefundRequest = async () => {
+        if (!order) return;
+        if (!confirm('Bạn có chắc chắn muốn hủy yêu cầu hoàn tiền?')) return;
+
+        try {
+            setLoading(true);
+            await OrderAPI.cancelRefundRequest(order.id.toString());
+            fetchOrderDetail(order.id.toString());
+        } catch (error: any) {
+            console.error('Error canceling refund request:', error);
+            alert(error.response?.data?.error || 'Không thể hủy yêu cầu hoàn tiền');
+            setLoading(false);
+        }
+    };
+
+    const handleCompleteOrder = async () => {
+        if (!order) return;
+        if (!confirm('Bạn xác nhận đã nhận được hàng và muốn hoàn tất đơn hàng?')) return;
+
+        try {
+            setLoading(true);
+            await OrderAPI.completeOrder(order.id.toString());
+            fetchOrderDetail(order.id.toString());
+        } catch (error: any) {
+            console.error('Error completing order:', error);
+            alert(error.response?.data?.error || 'Không thể hoàn tất đơn hàng');
+            setLoading(false);
         }
     };
 
@@ -129,7 +131,9 @@ export default function OrderDetailsPage() {
                 <div className="bg-card rounded-2xl border border-border shadow-md p-12 text-center">
                     <p className="text-text-muted">Không tìm thấy đơn hàng.</p>
                     <Link href="/account/orders">
-                        <button className="btn-tet-secondary mt-4">Quay lại danh sách</button>
+                        <button className="px-6 h-12 rounded-full bg-background border-2 border-tet-red text-foreground hover:bg-tet-cream shadow-md transition-all mt-4">
+                            Quay lại danh sách
+                        </button>
                     </Link>
                 </div>
             </DashboardLayout>
@@ -154,6 +158,13 @@ export default function OrderDetailsPage() {
                     </h1>
                 </div>
 
+                {errorMsg && (
+                    <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl flex items-center gap-2">
+                        <AlertCircle className="w-5 h-5" />
+                        {errorMsg}
+                    </div>
+                )}
+
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Main Content */}
                     <div className="lg:col-span-2 space-y-6">
@@ -164,17 +175,20 @@ export default function OrderDetailsPage() {
                                 Sản phẩm
                             </h2>
                             <div className="space-y-4">
-                                {order.items.map((item) => (
+                                {order.items.map((item: any) => (
                                     <div key={item.id} className="flex items-start gap-4 py-4 border-b border-border last:border-0">
-                                        {/* Placeholder for Product Image - API needs to return this */}
-                                        <div className="w-20 h-20 bg-gray-100 rounded-lg flex-shrink-0 flex items-center justify-center">
-                                            <ShoppingBag className="w-8 h-8 text-gray-400" />
+                                        <div className="w-20 h-20 bg-gray-100 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden">
+                                            {item.image ? (
+                                                <img src={item.image} alt={item.product_name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <ShoppingBag className="w-8 h-8 text-gray-400" />
+                                            )}
                                         </div>
 
                                         <div className="flex-1">
                                             <h3 className="font-medium text-foreground">{item.product_name}</h3>
                                             <p className="text-sm text-text-muted mt-1">
-                                                {Object.entries(item.variant_details).map(([key, value]) => (
+                                                {item.variant_details && Object.entries(item.variant_details).map(([key, value]) => (
                                                     <span key={key} className="mr-3 capitalize">
                                                         {key}: {String(value)}
                                                     </span>
@@ -194,17 +208,16 @@ export default function OrderDetailsPage() {
 
                         {/* Order Info Cards Mobile */}
                         <div className="lg:hidden space-y-6">
-                            {/* Shipping Info Mobile */}
                             <div className="bg-card rounded-2xl border border-border shadow-md p-6">
                                 <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
                                     <MapPin className="w-5 h-5 text-tet-gold" />
                                     Địa chỉ nhận hàng
                                 </h2>
                                 <div className="space-y-2 text-sm">
-                                    <p className="font-medium text-foreground">{order.shipping_address.full_name}</p>
-                                    <p className="text-text-muted">{order.shipping_address.phone}</p>
-                                    <p className="text-text-muted">{order.shipping_address.full_address}</p>
-                                    <p className="text-text-muted">{order.shipping_address.country}</p>
+                                    <p className="font-medium text-foreground">{order.shipping_address?.full_name}</p>
+                                    <p className="text-text-muted">{order.shipping_address?.phone}</p>
+                                    <p className="text-text-muted">{order.shipping_address?.full_address}</p>
+                                    <p className="text-text-muted">{order.shipping_address?.country}</p>
                                 </div>
                             </div>
                         </div>
@@ -215,9 +228,23 @@ export default function OrderDetailsPage() {
                         {/* Status Card */}
                         <div className="bg-card rounded-2xl border border-border shadow-md p-6">
                             <h2 className="text-lg font-bold text-foreground mb-4">Trạng thái</h2>
-                            <div className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${STATUS_COLORS[order.status]}`}>
-                                {order.status_display}
+
+                            <div className="flex flex-col gap-4">
+                                <div className={`inline-flex self-start px-3 py-1 rounded-full text-sm font-medium ${STATUS_COLORS[order.status] || 'bg-gray-100'}`}>
+                                    {order.status_display}
+                                </div>
+
+                                {/* Payment Expiration Timer */}
+                                {order.status === 'PENDING' &&
+                                    order.payment_status !== 'paid' &&
+                                    (order.time_until_expiration || 0) > 0 && (
+                                        <PaymentExpirationTimer
+                                            secondsRemaining={order.time_until_expiration || 0}
+                                            onExpire={handleOrderExpired}
+                                        />
+                                    )}
                             </div>
+
                             <div className="mt-4 pt-4 border-t border-border space-y-2 text-sm">
                                 <div className="flex justify-between text-text-muted">
                                     <span>Ngày đặt:</span>
@@ -236,22 +263,59 @@ export default function OrderDetailsPage() {
                             </div>
 
                             <div className="space-y-3 mt-6">
-                                {['pending'].includes(order.status) && order.payment_status !== 'paid' && (
+                                {/* Financial_Action_Button Logic */}
+                                {/* Scenario 1: PaymentStatus IN ['PENDING', 'FAILED'] -> Pay Again */}
+                                {['pending', 'failed'].includes(order.payment_status) && order.can_retry_payment && (
                                     <button
                                         onClick={handleRetryPayment}
-                                        className="w-full py-2 px-4 bg-tet-gold text-tet-red-dark rounded-lg hover:bg-tet-gold/80 transition-colors text-sm font-bold flex items-center justify-center gap-2"
+                                        disabled={isRetryingPayment}
+                                        className="w-full py-2 px-4 bg-tet-gold text-tet-red-dark rounded-lg hover:bg-tet-gold/80 transition-colors text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-70"
                                     >
                                         <CreditCard className="w-4 h-4" />
-                                        Thanh toán lại
+                                        {isRetryingPayment ? 'Đang xử lý...' : 'Thanh toán lại'}
                                     </button>
                                 )}
 
-                                {['pending', 'confirmed'].includes(order.status) && (
+                                {/* Scenario 2: OrderStatus == 'DELIVERED' AND PaymentStatus == 'SUCCESS' -> Request Refund */}
+                                {order.status === 'DELIVERED' && order.payment_status === 'paid' && order.can_request_refund && (
                                     <button
-                                        onClick={handleCancelOrder}
+                                        onClick={() => setIsRefundModalOpen(true)}
+                                        className="w-full py-2 px-4 bg-white border border-tet-gold text-tet-gold rounded-lg hover:bg-tet-gold/10 transition-colors text-sm font-medium flex items-center justify-center gap-2"
+                                    >
+                                        <AlertCircle className="w-4 h-4" />
+                                        Yêu cầu hoàn tiền
+                                    </button>
+                                )}
+
+                                {/* Scenario 3: OrderStatus == 'REFUND_REQUESTED' -> Cancel Refund Request */}
+                                {order.status === 'REFUND_REQUESTED' && (
+                                    <button
+                                        onClick={handleCancelRefundRequest}
+                                        className="w-full py-2 px-4 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                                    >
+                                        Hủy yêu cầu hoàn tiền
+                                    </button>
+                                )}
+
+
+                                {/* Lifecycle_Action_Button Logic */}
+                                {/* Scenario 1: OrderStatus IN ['PENDING', 'CONFIRMED', 'PROCESSING_SUCCESS'] -> Cancel Order */}
+                                {['PENDING', 'CONFIRMED', 'PROCESSING_SUCCESS', 'CONFIRMING'].includes(order.status) && (
+                                    <button
+                                        onClick={() => setIsCancelModalOpen(true)}
                                         className="w-full py-2 px-4 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm font-medium"
                                     >
                                         Hủy đơn hàng
+                                    </button>
+                                )}
+
+                                {/* Scenario 2: OrderStatus == 'DELIVERED' -> Complete Order */}
+                                {order.status === 'DELIVERED' && (
+                                    <button
+                                        onClick={handleCompleteOrder}
+                                        className="w-full py-2 px-4 bg-tet-red text-white rounded-lg hover:bg-tet-red/90 transition-colors text-sm font-bold shadow-md"
+                                    >
+                                        Hoàn tất đơn hàng
                                     </button>
                                 )}
                             </div>
@@ -264,9 +328,10 @@ export default function OrderDetailsPage() {
                                 Địa chỉ nhận hàng
                             </h2>
                             <div className="space-y-2 text-sm">
-                                <p className="font-medium text-foreground">{order.shipping_address.full_name}</p>
-                                <p className="text-text-muted">{order.shipping_address.phone}</p>
-                                <p className="text-text-muted">{order.shipping_address.full_address}</p>
+                                <p className="font-medium text-foreground">{order.shipping_address?.full_name}</p>
+                                <p className="text-text-muted">{order.shipping_address?.phone}</p>
+                                <p className="text-text-muted">{order.shipping_address?.full_address}</p>
+                                <p className="text-text-muted">{order.shipping_address?.country}</p>
                             </div>
                         </div>
 
@@ -301,6 +366,27 @@ export default function OrderDetailsPage() {
                         </div>
                     </div>
                 </div>
+
+                {/* Modals */}
+                {order && (
+                    <>
+                        <CancelOrderModal
+                            isOpen={isCancelModalOpen}
+                            onClose={() => setIsCancelModalOpen(false)}
+                            onConfirm={() => fetchOrderDetail(order.id.toString())}
+                            orderId={order.id.toString()}
+                            orderNumber={order.order_number}
+                        />
+
+                        <RefundRequestModal
+                            isOpen={isRefundModalOpen}
+                            onClose={() => setIsRefundModalOpen(false)}
+                            onConfirm={() => fetchOrderDetail(order.id.toString())}
+                            orderId={order.id.toString()}
+                            orderNumber={order.order_number}
+                        />
+                    </>
+                )}
             </div>
         </DashboardLayout>
     );

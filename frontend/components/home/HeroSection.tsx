@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
-import Button from "../Button";
+import Button from "../ui/Button";
 
 export default function HeroSection() {
     const fadeUpVariants = {

@@ -201,6 +201,18 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
+# CSRF Trusted Origins (required for cross-origin POST requests)
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+# CSRF Cookie settings for cross-origin requests
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_HTTPONLY = False  # Must be False so JavaScript can read it
+CSRF_COOKIE_SECURE = False  # False for HTTP localhost
+CSRF_USE_SESSIONS = False  # Use cookie-based CSRF
+
 
 # ==============================================================================
 # REDIS CACHE CONFIGURATION

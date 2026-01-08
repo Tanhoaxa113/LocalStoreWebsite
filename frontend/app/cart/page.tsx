@@ -8,7 +8,7 @@ import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
 import { cartAPI, type Cart } from "@/lib/api";
 import { useCartStore } from "@/lib/store";
 import { cn, formatPrice } from "@/lib/utils";
-import Button from "@/components/Button";
+import Button from "@/components/ui/Button";
 
 export default function CartPage() {
     const { cart, setCart } = useCartStore();

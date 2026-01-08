@@ -7,7 +7,7 @@ import { Search, ShoppingCart, Menu, X, Heart, Sparkles } from "lucide-react";
 import { useCartStore, useUIStore, useWishlistStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import UserDropdown from "./UserDropdown";
-import ThemeToggle from "./ThemeToggle";
+import ThemeToggle from "./effects/ThemeToggle";
 
 export default function Navigation() {
     const [scrolled, setScrolled] = useState(false);
