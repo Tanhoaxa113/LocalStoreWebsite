@@ -44,7 +44,7 @@ export default function OrderTimeline({ statusHistory, className = '' }: OrderTi
 
     if (!statusHistory || statusHistory.length === 0) {
         return (
-            <div className={`text-gray-500 text-sm ${className}`}>
+            <div className={`text-text-muted text-sm ${className}`}>
                 Chưa có lịch sử thay đổi trạng thái
             </div>
         );
@@ -70,7 +70,7 @@ export default function OrderTimeline({ statusHistory, className = '' }: OrderTi
                                 />
                                 {/* Line */}
                                 {!isLast && (
-                                    <div className="w-0.5 h-full bg-gray-300 absolute top-4" />
+                                    <div className="w-0.5 h-full bg-border absolute top-4" />
                                 )}
                             </div>
 
@@ -78,38 +78,38 @@ export default function OrderTimeline({ statusHistory, className = '' }: OrderTi
                             <div className="flex-1 pb-6">
                                 {/* Status Change */}
                                 <div className="flex items-center gap-2 mb-1">
-                                    <span className="font-medium text-gray-900">
+                                    <span className="font-medium text-text-primary">
                                         {history.from_status_display}
                                     </span>
-                                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-4 h-4 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                     </svg>
-                                    <span className="font-medium text-gray-900">
+                                    <span className="font-medium text-text-primary">
                                         {history.to_status_display}
                                     </span>
                                 </div>
 
                                 {/* Timestamp */}
-                                <div className="text-sm text-gray-500 mb-2">
+                                <div className="text-sm text-text-muted mb-2">
                                     {formatDate(history.created_at)}
                                 </div>
 
                                 {/* Actor */}
                                 {history.changed_by_name && (
-                                    <div className="text-sm text-gray-600 mb-2">
+                                    <div className="text-sm text-text-secondary mb-2">
                                         <span className="font-medium">Người thực hiện:</span>{' '}
                                         {history.changed_by_name}
                                         {history.changed_by_email && (
-                                            <span className="text-gray-500"> ({history.changed_by_email})</span>
+                                            <span className="text-text-muted"> ({history.changed_by_email})</span>
                                         )}
                                     </div>
                                 )}
 
                                 {/* Note */}
                                 {history.note && (
-                                    <div className="mt-2 bg-gray-50 rounded-lg p-3 border border-gray-200">
-                                        <p className="text-sm text-gray-700">
-                                            <span className="font-medium">Ghi chú:</span> {history.note}
+                                    <div className="mt-2 bg-card rounded-lg p-3 border border-border">
+                                        <p className="text-sm text-text-muted">
+                                            <span className="font-medium text-text-primary">Ghi chú:</span> {history.note}
                                         </p>
                                     </div>
                                 )}

@@ -308,6 +308,43 @@ class OrderService:
         return True
     
     @staticmethod
+    def confirm_refunded(order, staff_user, note=None):
+        """
+        Manually confirm that a refund has been processed (REFUNDING -> REFUNDED)
+        
+        Args:
+            order: Order instance
+            staff_user: Staff user confirming the refund
+            note: Optional note
+        
+        Returns:
+            bool: True if successful
+        
+        Raises:
+            ValueError: If order is not in REFUNDING status
+        """
+        from apps.orders.models import OrderStatus
+        
+        if order.status != OrderStatus.REFUNDING:
+            raise ValueError(f"Order {order.order_number} is not in REFUNDING state")
+        
+        # Transition to REFUNDED
+        success = order.transition_to(
+            OrderStatus.REFUNDED,
+            actor=staff_user,
+            note=note or "Manual refund confirmation by staff"
+        )
+        
+        if success:
+            # Update payment status
+            order.payment_status = 'refunded'
+            order.save(update_fields=['payment_status'])
+            
+            logger.info(f"Refund manually confirmed for order {order.order_number} by {staff_user.email}")
+        
+        return success
+    
+    @staticmethod
     def reject_refund(order, staff_user, rejection_reason):
         """
         Reject refund request and return order to previous state

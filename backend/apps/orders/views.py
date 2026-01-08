@@ -509,6 +509,28 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
                 'error': str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=True, methods=['post'], url_path='confirm_refunded')
+    def confirm_refunded(self, request, pk=None):
+        """Manual refund confirmation (REFUNDING -> REFUNDED)"""
+        order = self.get_object()
+        
+        # Only staff/admin can confirm refund
+        if not request.user.is_staff:
+             return Response(
+                {'error': 'Permission denied'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+            
+        try:
+            OrderService.confirm_refunded(
+                order=order,
+                staff_user=request.user,
+                note=request.data.get('note')
+            )
+            return Response({'status': 'refund confirmed'})
+        except ValueError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def cancel_refund(self, request, pk=None):
         """

@@ -170,7 +170,7 @@ export default function OrderDetailsPage() {
                     <div className="lg:col-span-2 space-y-6">
                         {/* Order Items */}
                         <div className="bg-card rounded-2xl border border-border shadow-md p-6">
-                            <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+                            <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-gradient-gold w-fit">
                                 <Package className="w-5 h-5 text-tet-gold" />
                                 Sản phẩm
                             </h2>
@@ -209,7 +209,7 @@ export default function OrderDetailsPage() {
                         {/* Order Info Cards Mobile */}
                         <div className="lg:hidden space-y-6">
                             <div className="bg-card rounded-2xl border border-border shadow-md p-6">
-                                <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+                                <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-gradient-gold w-fit">
                                     <MapPin className="w-5 h-5 text-tet-gold" />
                                     Địa chỉ nhận hàng
                                 </h2>
@@ -227,7 +227,7 @@ export default function OrderDetailsPage() {
                     <div className="space-y-6">
                         {/* Status Card */}
                         <div className="bg-card rounded-2xl border border-border shadow-md p-6">
-                            <h2 className="text-lg font-bold text-foreground mb-4">Trạng thái</h2>
+                            <h2 className="text-lg font-bold mb-4 text-gradient-gold w-fit">Trạng thái</h2>
 
                             <div className="flex flex-col gap-4">
                                 <div className={`inline-flex self-start px-3 py-1 rounded-full text-sm font-medium ${STATUS_COLORS[order.status] || 'bg-gray-100'}`}>
@@ -323,7 +323,7 @@ export default function OrderDetailsPage() {
 
                         {/* Shipping Address Desktop */}
                         <div className="hidden lg:block bg-card rounded-2xl border border-border shadow-md p-6">
-                            <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+                            <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-gradient-gold w-fit">
                                 <MapPin className="w-5 h-5 text-tet-gold" />
                                 Địa chỉ nhận hàng
                             </h2>
@@ -337,7 +337,7 @@ export default function OrderDetailsPage() {
 
                         {/* Payment Summary */}
                         <div className="bg-card rounded-2xl border border-border shadow-md p-6">
-                            <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+                            <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-gradient-gold w-fit">
                                 <CreditCard className="w-5 h-5 text-tet-gold" />
                                 Thanh toán
                             </h2>

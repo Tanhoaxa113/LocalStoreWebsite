@@ -165,6 +165,21 @@ export default function OrderDetailPage() {
         }
     };
 
+    const handleConfirmRefunded = async () => {
+        if (!window.confirm('Xác nhận đã hoàn tiền thủ công cho đơn hàng này?')) return;
+
+        try {
+            setActionLoading(true);
+            await OrderAPI.confirmRefunded(orderId);
+            alert('Đơn hàng đã được xác nhận hoàn tiền!');
+            fetchOrder();
+        } catch (error: any) {
+            alert(error.response?.data?.error || 'Có lỗi xảy ra');
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -187,11 +202,11 @@ export default function OrderDetailPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 p-6">
+        <div className="p-6">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="mb-6">
-                    <Link href="/admin/orders" className="text-blue-600 hover:text-blue-800 mb-4 inline-flex items-center">
+                    <Link href="/admin/orders" className="text-text-muted hover:text-tet-gold mb-4 inline-flex items-center transition-colors">
                         <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
@@ -199,10 +214,10 @@ export default function OrderDetailPage() {
                     </Link>
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-3xl font-bold text-gray-900">
+                            <h1 className="text-3xl font-bold text-gradient-tet font-display mb-1">
                                 Đơn hàng #{order.order_number}
                             </h1>
-                            <p className="text-gray-600 mt-1">
+                            <p className="text-text-muted">
                                 Đặt lúc {formatDate(order.created_at)}
                             </p>
                         </div>
@@ -211,8 +226,8 @@ export default function OrderDetailPage() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="bg-white rounded-lg shadow p-6 mb-6">
-                    <h2 className="text-lg font-semibold mb-4">Thao tác</h2>
+                <div className="bg-card border border-border rounded-lg shadow-md p-6 mb-6">
+                    <h2 className="text-lg font-semibold mb-4 text-gradient-gold w-fit">Thao tác</h2>
                     <div className="flex flex-wrap gap-3">
                         {order.can_confirm && (
                             <button
@@ -278,6 +293,19 @@ export default function OrderDetailPage() {
                             </>
                         )}
 
+                        {order.status === 'REFUNDING' && (
+                            <button
+                                onClick={handleConfirmRefunded}
+                                disabled={actionLoading}
+                                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 flex items-center gap-2"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Đã hoàn tiền
+                            </button>
+                        )}
+
                         {order.can_cancel && (
                             <button
                                 onClick={() => setShowCancelModal(true)}
@@ -297,57 +325,57 @@ export default function OrderDetailPage() {
                     {/* Left Column - Order Details */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Order Items */}
-                        <div className="bg-white rounded-lg shadow overflow-hidden">
-                            <div className="px-6 py-4 border-b border-gray-200">
-                                <h2 className="text-lg font-semibold">Sản phẩm</h2>
+                        <div className="bg-card border border-border rounded-lg shadow-md overflow-hidden">
+                            <div className="px-6 py-4 border-b border-border bg-tet-cream/30">
+                                <h2 className="text-lg font-semibold text-gradient-gold w-fit">Sản phẩm</h2>
                             </div>
                             <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gray-50">
+                                <table className="min-w-full divide-y divide-border">
+                                    <thead className="bg-tet-cream/30">
                                         <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sản phẩm</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">SKU</th>
-                                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Đơn giá</th>
-                                            <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Số lượng</th>
-                                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Thành tiền</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase">Sản phẩm</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase">SKU</th>
+                                            <th className="px-6 py-3 text-right text-xs font-medium text-text-muted uppercase">Đơn giá</th>
+                                            <th className="px-6 py-3 text-center text-xs font-medium text-text-muted uppercase">Số lượng</th>
+                                            <th className="px-6 py-3 text-right text-xs font-medium text-text-muted uppercase">Thành tiền</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="bg-white divide-y divide-gray-200">
+                                    <tbody className="bg-card divide-y divide-border">
                                         {order.items.map((item) => (
                                             <tr key={item.id}>
                                                 <td className="px-6 py-4">
-                                                    <div className="font-medium text-gray-900">{item.product_name}</div>
-                                                    <div className="text-sm text-gray-500">
+                                                    <div className="font-medium text-text-primary">{item.product_name}</div>
+                                                    <div className="text-sm text-text-muted">
                                                         {Object.entries(item.variant_details).map(([key, value]) => (
                                                             value && <span key={key} className="mr-2">{value}</span>
                                                         ))}
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4 text-sm text-gray-500">{item.variant_sku}</td>
-                                                <td className="px-6 py-4 text-right text-sm">{formatCurrency(item.unit_price)}</td>
-                                                <td className="px-6 py-4 text-center text-sm">{item.quantity}</td>
-                                                <td className="px-6 py-4 text-right font-medium">{formatCurrency(item.total_price)}</td>
+                                                <td className="px-6 py-4 text-sm text-text-muted">{item.variant_sku}</td>
+                                                <td className="px-6 py-4 text-right text-sm text-text-primary">{formatCurrency(item.unit_price)}</td>
+                                                <td className="px-6 py-4 text-center text-sm text-text-primary">{item.quantity}</td>
+                                                <td className="px-6 py-4 text-right font-medium text-text-primary">{formatCurrency(item.total_price)}</td>
                                             </tr>
                                         ))}
                                     </tbody>
-                                    <tfoot className="bg-gray-50">
+                                    <tfoot className="bg-tet-cream/30">
                                         <tr>
-                                            <td colSpan={4} className="px-6 py-3 text-right text-sm font-medium text-gray-700">Tạm tính:</td>
-                                            <td className="px-6 py-3 text-right font-medium">{formatCurrency(order.subtotal)}</td>
+                                            <td colSpan={4} className="px-6 py-3 text-right text-sm font-medium text-text-muted">Tạm tính:</td>
+                                            <td className="px-6 py-3 text-right font-medium text-text-primary">{formatCurrency(order.subtotal)}</td>
                                         </tr>
                                         <tr>
-                                            <td colSpan={4} className="px-6 py-3 text-right text-sm font-medium text-gray-700">Phí vận chuyển:</td>
-                                            <td className="px-6 py-3 text-right font-medium">{formatCurrency(order.shipping_cost)}</td>
+                                            <td colSpan={4} className="px-6 py-3 text-right text-sm font-medium text-text-muted">Phí vận chuyển:</td>
+                                            <td className="px-6 py-3 text-right font-medium text-text-primary">{formatCurrency(order.shipping_cost)}</td>
                                         </tr>
                                         {parseFloat(order.discount_amount) > 0 && (
                                             <tr>
-                                                <td colSpan={4} className="px-6 py-3 text-right text-sm font-medium text-green-700">Giảm giá:</td>
-                                                <td className="px-6 py-3 text-right font-medium text-green-700">-{formatCurrency(order.discount_amount)}</td>
+                                                <td colSpan={4} className="px-6 py-3 text-right text-sm font-medium text-tet-red">Giảm giá:</td>
+                                                <td className="px-6 py-3 text-right font-medium text-tet-red">-{formatCurrency(order.discount_amount)}</td>
                                             </tr>
                                         )}
-                                        <tr className="border-t-2 border-gray-300">
-                                            <td colSpan={4} className="px-6 py-4 text-right text-lg font-bold text-gray-900">Tổng cộng:</td>
-                                            <td className="px-6 py-4 text-right text-lg font-bold text-gray-900">{formatCurrency(order.total)}</td>
+                                        <tr className="border-t-2 border-border">
+                                            <td colSpan={4} className="px-6 py-4 text-right text-lg font-bold text-text-primary">Tổng cộng:</td>
+                                            <td className="px-6 py-4 text-right text-lg font-bold text-gradient-gold">{formatCurrency(order.total)}</td>
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -355,8 +383,8 @@ export default function OrderDetailPage() {
                         </div>
 
                         {/* Status History */}
-                        <div className="bg-white rounded-lg shadow p-6">
-                            <h2 className="text-lg font-semibold mb-4">Lịch sử trạng thái</h2>
+                        <div className="bg-card border border-border rounded-lg shadow-md p-6">
+                            <h2 className="text-lg font-semibold mb-4 text-gradient-gold w-fit">Lịch sử trạng thái</h2>
                             <OrderTimeline statusHistory={order.status_history} />
                         </div>
                     </div>
@@ -364,8 +392,8 @@ export default function OrderDetailPage() {
                     {/* Right Column - Customer & Payment Info */}
                     <div className="space-y-6">
                         {/* Customer Info */}
-                        <div className="bg-white rounded-lg shadow p-6">
-                            <h2 className="text-lg font-semibold mb-4">Thông tin khách hàng</h2>
+                        <div className="bg-card border border-border rounded-lg shadow-md p-6">
+                            <h2 className="text-lg font-semibold mb-4 text-gradient-gold w-fit">Thông tin khách hàng</h2>
                             <div className="space-y-3">
                                 <div>
                                     <p className="text-sm text-gray-500">Họ tên</p>
@@ -383,8 +411,8 @@ export default function OrderDetailPage() {
                         </div>
 
                         {/* Shipping Address */}
-                        <div className="bg-white rounded-lg shadow p-6">
-                            <h2 className="text-lg font-semibold mb-4">Địa chỉ giao hàng</h2>
+                        <div className="bg-card border border-border rounded-lg shadow-md p-6">
+                            <h2 className="text-lg font-semibold mb-4 text-gradient-gold w-fit">Địa chỉ giao hàng</h2>
                             <div className="space-y-2 text-sm">
                                 <p className="font-medium">{order.shipping_address.full_name}</p>
                                 <p>{order.shipping_address.phone}</p>
@@ -393,8 +421,8 @@ export default function OrderDetailPage() {
                         </div>
 
                         {/* Payment Info */}
-                        <div className="bg-white rounded-lg shadow p-6">
-                            <h2 className="text-lg font-semibold mb-4">Thanh toán</h2>
+                        <div className="bg-card border border-border rounded-lg shadow-md p-6">
+                            <h2 className="text-lg font-semibold mb-4 text-gradient-gold w-fit">Thanh toán</h2>
                             <div className="space-y-3">
                                 <div>
                                     <p className="text-sm text-gray-500">Phương thức</p>
@@ -403,8 +431,8 @@ export default function OrderDetailPage() {
                                 <div>
                                     <p className="text-sm text-gray-500">Trạng thái</p>
                                     <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${order.payment_status === 'paid' ? 'bg-green-100 text-green-800' :
-                                            order.payment_status === 'failed' ? 'bg-red-100 text-red-800' :
-                                                'bg-yellow-100 text-yellow-800'
+                                        order.payment_status === 'failed' ? 'bg-red-100 text-red-800' :
+                                            'bg-yellow-100 text-yellow-800'
                                         }`}>
                                         {order.payment_status_display}
                                     </span>
@@ -420,12 +448,12 @@ export default function OrderDetailPage() {
 
                         {/* Shipping Info */}
                         {(order.tracking_number || order.carrier) && (
-                            <div className="bg-white rounded-lg shadow p-6">
-                                <h2 className="text-lg font-semibold mb-4">Vận chuyển</h2>
+                            <div className="bg-card border border-border rounded-lg shadow-md p-6">
+                                <h2 className="text-lg font-semibold mb-4 text-gradient-gold w-fit">Vận chuyển</h2>
                                 <div className="space-y-3">
                                     {order.carrier && (
                                         <div>
-                                            <p className="text-sm text-gray-500">Đơn vị vận chuyển</p>
+                                            <p className="text-sm text-text-muted">Đơn vị vận chuyển</p>
                                             <p className="font-medium">{order.carrier}</p>
                                         </div>
                                     )}
@@ -441,13 +469,13 @@ export default function OrderDetailPage() {
 
                         {/* Notes */}
                         {(order.customer_note || order.refund_reason || order.cancellation_reason) && (
-                            <div className="bg-white rounded-lg shadow p-6">
-                                <h2 className="text-lg font-semibold mb-4">Ghi chú</h2>
+                            <div className="bg-card border border-border rounded-lg shadow-md p-6">
+                                <h2 className="text-lg font-semibold mb-4 text-gradient-gold w-fit">Ghi chú</h2>
                                 <div className="space-y-3">
                                     {order.customer_note && (
                                         <div>
-                                            <p className="text-sm font-medium text-gray-700">Ghi chú khách hàng:</p>
-                                            <p className="text-sm text-gray-600 mt-1">{order.customer_note}</p>
+                                            <p className="text-sm font-medium text-text-primary">Ghi chú khách hàng:</p>
+                                            <p className="text-sm text-text-muted mt-1">{order.customer_note}</p>
                                         </div>
                                     )}
                                     {order.refund_reason && (

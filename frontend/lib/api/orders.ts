@@ -319,6 +319,14 @@ export const OrderAPI = {
     },
 
     /**
+     * Admin manually confirms refund
+     */
+    confirmRefunded: async (orderId: string, data: { note?: string } = {}): Promise<ApiResponse> => {
+        const response = await apiClient.post<ApiResponse>(`/orders/${orderId}/confirm_refunded/`, data);
+        return response.data;
+    },
+
+    /**
      * Retry payment for failed orders
      */
     retryPayment: async (orderId: string): Promise<{ success: boolean; payment_url?: string; transaction_id?: string; error?: string }> => {

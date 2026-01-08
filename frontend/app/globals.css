@@ -226,7 +226,7 @@ body {
 }
 
 .text-gradient-gold {
-  @apply bg-gradient-to-r from-tet-gold-dark via-tet-gold to-tet-gold-light bg-clip-text text-transparent;
+  @apply bg-gradient-to-r from-yellow-600 via-amber-500 to-yellow-600 bg-clip-text text-transparent;
 }
 
 .text-gradient-fortune {
