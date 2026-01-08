@@ -1,0 +1,486 @@
+/* stylelint-disable at-rule-no-unknown */
+/* Suppress warnings for Tailwind CSS v4 directives: @import, @theme, @apply */
+@import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
+
+/**
+ * Tet Holiday Theme for Korean Eyewear Shop
+ * Tết Nguyên Đán - Lunar New Year Celebration
+ * Color Palette: Lucky Red + Premium Gold + Warm Cream
+ */
+
+:root {
+
+  /* Reds - Tet Holiday */
+  --tet-red: #D42426;
+  /* Primary Red */
+  --tet-red-light: #FF6B6B;
+  /* Hover Red */
+  --tet-red-dark: #8B0000;
+  /* Deep Red */
+
+  /* Golds - Accents & Text on Dark */
+  --tet-gold: #E6C878;
+  /* Standard Gold */
+  --tet-gold-light: #ecd05d;
+  /* Highlight Gold */
+  --tet-gold-dark: #FFE680;
+  /* Text Gold (High contrast) */
+
+  /* Semantic Colors (Status) */
+  --success: #28A745;
+  --error: #DC3545;
+  --warning: #FFC107;
+  --info: #17A2B8;
+  /* Backgrounds */
+  --background: #FFFAF0;
+  /* Rice Paper White */
+  --foreground: #000000;
+  /* Jet Black */
+  --tet-cream: #F9F5F0;
+  /* Warm Cream */
+  --tet-silk: #FFF5E6;
+  /* Silk White */
+  --tet-paper: #FFFAF0;
+
+  /* Text Colors */
+  --text-primary: #000000;
+  /* Jet Black */
+  --text-secondary: #111111;
+  /* Deep Charcoal */
+  --text-muted: #222222;
+  /* Medium Grey */
+
+  /* Text on Special Backgrounds */
+  --text-on-dark: #FFE680;
+  /* Gold text on dark bg */
+  --text-on-red: #FFE680;
+  /* Gold text on red bg */
+
+  /* UI Elements */
+  --muted: #F5F0E8;
+  --border: #E8DCC8;
+  --card-bg: #FFFFFF;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Re-map Backgrounds to Dark */
+    --background: #1A0F00;
+    /* Deep Dark Brown/Black */
+    --foreground: #FFF8E7;
+    /* Light Cream Text */
+
+    /* Swap UI Backgrounds */
+    --tet-cream: #2D1B00;
+    /* Dark Brown instead of Cream */
+    --tet-silk: #d89f69;
+    /* Muted Bronze instead of Silk */
+    /* --tet-paper: Muội có thể thêm màu tối cho paper nếu cần, hoặc để nó inherit background */
+
+    /* Re-map Text Colors for Dark Mode */
+    --text-primary: #FFF8E7;
+    /* Light Cream */
+    --text-secondary: #E8DCC8;
+    /* Pale Gold/Beige */
+    --text-muted: #B8A898;
+
+    /* UI Elements */
+    --muted: #2D1B00;
+    --border: #4A3520;
+    --card-bg: #2D1B00;
+  }
+}
+
+/* Explicit Dark Mode - Override media query */
+.dark {
+  /* Re-map Backgrounds to Dark */
+  --background: #1A0F00;
+  /* Deep Dark Brown/Black */
+  --foreground: #FFF8E7;
+  /* Light Cream Text */
+
+  /* Swap UI Backgrounds */
+  --tet-cream: #2D1B00;
+  /* Dark Brown instead of Cream */
+  --tet-silk: #d89f69;
+  /* Muted Bronze instead of Silk */
+
+  /* Re-map Text Colors for Dark Mode */
+  --text-primary: #FFF8E7;
+  /* Light Cream */
+  --text-secondary: #E8DCC8;
+  /* Pale Gold/Beige */
+  --text-muted: #B8A898;
+
+  /* UI Elements */
+  --muted: #2D1B00;
+  --border: #4A3520;
+  --card-bg: #2D1B00;
+}
+
+@theme inline {
+  --color-tet-red: var(--tet-red);
+  --color-tet-red-light: var(--tet-red-light);
+  --color-tet-red-dark: var(--tet-red-dark);
+  --color-tet-gold: var(--tet-gold);
+  --color-tet-gold-light: var(--tet-gold-light);
+  --color-tet-gold-dark: var(--tet-gold-dark);
+
+  --color-tet-cream: var(--tet-cream);
+  --color-tet-silk: var(--tet-silk);
+  --color-tet-paper: var(--tet-paper);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-on-dark: var(--text-on-dark);
+  --color-text-on-red: var(--text-on-red);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-card: var(--card-bg);
+
+  --color-success: var(--success);
+  --color-error: var(--error);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+
+  /* Typography */
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-outfit);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Spacing & Sizing */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* Shadows - Tet Edition */
+  --shadow-sm: 0 1px 2px 0 rgb(212 36 38 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(212 36 38 / 0.1), 0 2px 4px -2px rgb(212 36 38 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(212 36 38 / 0.1), 0 4px 6px -4px rgb(212 36 38 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(212 36 38 / 0.1), 0 8px 10px -6px rgb(212 36 38 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(212 36 38 / 0.25);
+
+  /* Tet Glow Effects */
+  --glow-red: 0 0 20px rgba(212, 36, 38, 0.4);
+  --glow-gold: 0 0 20px rgba(197, 160, 89, 0.5);
+  --glow-fortune: 0 0 30px rgba(255, 215, 0, 0.6);
+}
+
+/* Base Styles */
+* {
+  @apply border-border;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply text-foreground antialiased;
+  font-feature-settings: "rlig" 1, "calt" 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Background is now handled by ScrollBackground component for dynamic scroll-driven effects */
+}
+
+/* Custom Scrollbar - Tet Theme */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-tet-cream;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-tet-gold rounded-lg;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-tet-gold-dark;
+}
+
+/* Selection */
+::selection {
+  @apply bg-tet-gold-light text-tet-red-dark;
+}
+
+::-moz-selection {
+  @apply bg-tet-gold-light text-tet-red-dark;
+}
+
+/* Utilities */
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-gradient-tet {
+  @apply bg-gradient-to-r from-tet-red via-tet-gold to-tet-red bg-clip-text text-transparent;
+}
+
+.text-gradient-gold {
+  @apply bg-gradient-to-r from-tet-gold-dark via-tet-gold to-tet-gold-light bg-clip-text text-transparent;
+}
+
+.text-gradient-fortune {
+  @apply bg-gradient-to-r from-tet-red to-tet-gold bg-clip-text text-transparent;
+}
+
+.text-gradient-product {
+  @apply bg-gradient-to-r from-tet-red-dark via-tet-gold-light to-tet-red-dark bg-clip-text text-transparent;
+}
+
+/* Dark Mode Enhanced Gradients - Brighter for visibility */
+.dark .text-gradient-tet {
+  @apply bg-gradient-to-r from-tet-red-light via-tet-gold-dark to-tet-red-light bg-clip-text text-transparent;
+}
+
+.dark .text-gradient-gold {
+  @apply bg-gradient-to-r from-tet-gold-dark via-tet-gold-light to-tet-gold-dark bg-clip-text text-transparent;
+}
+
+.dark .text-gradient-fortune {
+  @apply bg-gradient-to-r from-tet-red-light to-tet-gold-dark bg-clip-text text-transparent;
+}
+
+.dark .text-gradient-product {
+  @apply bg-gradient-to-r from-tet-red-light via-tet-gold-dark to-tet-red-light bg-clip-text text-transparent;
+}
+
+.glass-effect {
+  @apply bg-background/80 backdrop-blur-md border border-border/50;
+  will-change: backdrop-filter, transform;
+  transform: translateZ(0);
+}
+
+.tet-glow {
+  box-shadow: var(--glow-gold);
+}
+
+.fortune-glow {
+  box-shadow: var(--glow-fortune);
+}
+
+.red-glow {
+  box-shadow: var(--glow-red);
+}
+
+/* Tet Pattern Overlay */
+.tet-pattern {
+  background-image:
+    repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(197, 160, 89, 0.03) 10px, rgba(197, 160, 89, 0.03) 20px);
+}
+
+/* Animations */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes petal-fall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(110vh) rotate(360deg);
+    opacity: 0.3;
+  }
+}
+
+@keyframes shimmer-gold {
+  0% {
+    background-position: -1000px 0;
+  }
+
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sparkle-tet {
+
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(180deg);
+  }
+}
+
+@keyframes coin-shower {
+  0% {
+    transform: translateY(-50px) rotate(0deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-petal-fall {
+  animation: petal-fall 8s linear infinite;
+}
+
+.animate-shimmer-gold {
+  animation: shimmer-gold 2s linear infinite;
+  background: linear-gradient(to right,
+      transparent 0%,
+      rgba(197, 160, 89, 0.4) 50%,
+      transparent 100%);
+  background-size: 1000px 100%;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out;
+}
+
+.animate-sparkle-tet {
+  animation: sparkle-tet 1.5s ease-in-out infinite;
+}
+
+.animate-coin-shower {
+  animation: coin-shower 2s ease-out forwards;
+}
+
+/* Focus Visible - Accessibility */
+:focus-visible {
+  @apply outline-none ring-2 ring-tet-gold ring-offset-2 ring-offset-background;
+}
+
+/* Disabled State */
+:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+/* Links */
+a {
+  @apply transition-colors duration-200;
+}
+
+a:hover {
+  @apply text-tet-gold;
+}
+
+/* Buttons Base */
+button {
+  @apply transition-all duration-200;
+}
+
+/* Image Loading */
+img {
+  @apply transition-opacity duration-300;
+}
+
+img[loading] {
+  @apply opacity-0;
+}
+
+img.loaded {
+  @apply opacity-100;
+}
+
+/* Container */
+.container {
+  @apply mx-auto px-4 sm:px-6 lg:px-8;
+  max-width: 1600px;
+}
+
+/* Section Spacing */
+.section-spacing {
+  @apply py-16 sm:py-20 lg:py-24;
+}
+
+/* Card Hover Effect - Spotlight with Tet Glow */
+.card-spotlight {
+  @apply transition-all duration-300 ease-out;
+}
+
+.card-spotlight:hover {
+  @apply scale-105 shadow-2xl z-10;
+  box-shadow: 0 20px 40px rgba(212, 36, 38, 0.2), 0 0 30px rgba(197, 160, 89, 0.3);
+}
+
+/* Blur Siblings on Hover (Spotlight Effect) - DISABLED for better scroll experience */
+/* .spotlight-container:hover .card-spotlight:not(:hover) {
+  @apply blur-sm opacity-60;
+} */
+
+/* Tet Button Styles - FIXED: Consistent Heights + Premium Gold Text */
+.btn-tet-primary {
+  @apply bg-gradient-to-br from-tet-red to-tet-red-dark hover:from-tet-red-dark hover:to-tet-red shadow-lg hover:shadow-xl;
+  @apply border-2 border-tet-gold;
+  @apply font-semibold rounded-full px-6 h-12 transition-all duration-200;
+  @apply flex items-center justify-center gap-2;
+  /* FIXED: Premium Gold text on red background (Matches 'Mới' tag) */
+  color: #FFF4A3;
+}
+
+.btn-tet-primary:hover {
+  box-shadow: 0 10px 25px rgba(212, 36, 38, 0.3);
+}
+
+.btn-tet-gold {
+  @apply bg-tet-gold text-tet-red-dark hover:bg-tet-gold-dark shadow-lg hover:shadow-xl;
+  @apply font-semibold rounded-full px-6 h-12 transition-all duration-200;
+  @apply flex items-center justify-center gap-2;
+}
+
+.btn-tet-gold:hover {
+  box-shadow: 0 10px 25px rgba(197, 160, 89, 0.4);
+}
+
+/* Lucky Envelope Badge */
+.lucky-envelope {
+  @apply bg-gradient-to-br from-tet-red to-tet-red-dark;
+  @apply border-2 border-tet-gold shadow-lg;
+  @apply relative overflow-hidden;
+}
+
+.lucky-envelope::before {
+  content: '';
+  @apply absolute inset-0;
+  background: linear-gradient(135deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+  @apply opacity-0 transition-opacity duration-300;
+}
+
+.lucky-envelope:hover::before {
+  @apply opacity-100;
+}
