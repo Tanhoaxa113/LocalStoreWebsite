@@ -3,46 +3,7 @@
  * TypeScript client for interacting with Order Management APIs
  */
 
-import axios, { AxiosInstance } from 'axios';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
-
-// Create axios instance with default config
-const apiClient: AxiosInstance = axios.create({
-    baseURL: API_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    withCredentials: true, // For Django session auth
-});
-
-// Helper function to get CSRF token from cookies
-function getCookie(name: string): string | null {
-    if (typeof document === 'undefined') return null;
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
-    return null;
-}
-
-// Add auth token and CSRF token interceptor
-apiClient.interceptors.request.use((config) => {
-    // Add auth token
-    const token = localStorage.getItem('authToken');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    // Add CSRF token for unsafe methods
-    if (config.method && ['post', 'put', 'patch', 'delete'].includes(config.method.toLowerCase())) {
-        const csrfToken = getCookie('csrftoken');
-        if (csrfToken) {
-            config.headers['X-CSRFToken'] = csrfToken;
-        }
-    }
-
-    return config;
-});
+import { api as apiClient } from '../api';
 
 // Types
 export interface User {
