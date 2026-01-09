@@ -1,8 +1,6 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Filter, X, ChevronDown } from "lucide-react";
@@ -11,7 +9,7 @@ import { productsAPI, type Product } from "@/lib/api";
 import { useFilterStore, useCartStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
-export default function ProductsPage() {
+function ProductsContent() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [showFilters, setShowFilters] = useState(false);
@@ -303,5 +301,13 @@ function FilterCheckbox({
                 {label}
             </span>
         </label>
+    );
+}
+
+export default function ProductsPage() {
+    return (
+        <Suspense fallback={<div className="container py-8 text-center">Loading products...</div>}>
+            <ProductsContent />
+        </Suspense>
     );
 }
