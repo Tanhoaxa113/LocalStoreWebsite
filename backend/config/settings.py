@@ -28,6 +28,10 @@ SECRET_KEY = 'django-insecure-m+kym(6x8z&sv-7t-iv+1k*e7z6l-q0!2i&$ii%o&3)xafbsp=
 DEBUG = True
 
 ALLOWED_HOSTS = [host.strip() for host in config('ALLOWED_HOSTS', default='*').split(',')]
+ALLOWED_HOSTS.extend(["ttgshopclone.id.vn", "www.ttgshopclone.id.vn", "35.197.128.235", "localhost", "127.0.0.1"])
+
+# Trust Nginx to handle SSL
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Application definition
@@ -199,6 +203,9 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Next.js default dev server
     "http://127.0.0.1:3000",
+    "https://ttgshopclone.id.vn",
+    "https://www.ttgshopclone.id.vn",
+    "http://35.197.128.235",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
