@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import Button from "@/components/Button";
+import Button from "@/components/ui/Button";
 import { resetPassword } from "@/lib/api/auth";
 
 export default function ResetPasswordPage() {

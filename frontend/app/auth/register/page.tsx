@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Eye, EyeOff } from "lucide-react";
-import Button from "@/components/Button";
+import Button from "@/components/ui/Button";
 import { useAuthStore } from "@/store/authStore";
 import { register } from "@/lib/api/auth";
 

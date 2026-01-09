@@ -39,7 +39,7 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset.order_by('display_order', 'name')
 
 
-class ProductViewSet(viewsets.ReadOnlyModelViewSet):
+class ProductViewSet(viewsets.ModelViewSet):
     """
     ViewSet for Products
     Provides list, retrieve, and filtering
@@ -54,6 +54,9 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     
     def get_serializer_class(self):
         """Use different serializers for list and detail views"""
+        if self.action in ['create', 'update', 'partial_update']:
+            from .serializers import ProductCreateSerializer
+            return ProductCreateSerializer
         if self.action == 'retrieve':
             return ProductDetailSerializer
         return ProductListSerializer
@@ -140,15 +143,16 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(serializer.data)
 
 
-class ProductVariantViewSet(viewsets.ReadOnlyModelViewSet):
+class ProductVariantViewSet(viewsets.ModelViewSet):
     """
     ViewSet for Product Variants
-    Allows filtering variants by product
+    Allows filtering variants by product and searching by SKU, product name, or brand
     """
-    queryset = ProductVariant.objects.filter(is_active=True).select_related('product')
+    queryset = ProductVariant.objects.select_related('product')
     serializer_class = ProductVariantSerializer
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['product', 'color', 'material', 'lens_type', 'size']
+    search_fields = ['=sku', 'sku', 'product__name', 'product__brand']
     
     def get_queryset(self):
         """Custom filtering"""
@@ -158,6 +162,14 @@ class ProductVariantViewSet(viewsets.ReadOnlyModelViewSet):
         product_slug = self.request.query_params.get('product_slug', None)
         if product_slug:
             queryset = queryset.filter(product__slug=product_slug)
+        
+        # Filter by active status (optional, defaults to showing only active)
+        is_active = self.request.query_params.get('is_active', None)
+        if is_active == 'false':
+            queryset = queryset.filter(is_active=False)
+        elif is_active != 'all':
+            # Default: show only active variants
+            queryset = queryset.filter(is_active=True)
         
         # Filter by availability
         in_stock = self.request.query_params.get('in_stock', None)

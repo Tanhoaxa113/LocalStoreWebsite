@@ -58,6 +58,10 @@ class ProductVariantSerializer(serializers.ModelSerializer):
     # Include variant-specific media
     media = ProductMediaSerializer(many=True, read_only=True)
     
+    # Product information for better UX in admin
+    product_name = serializers.CharField(source='product.name', read_only=True)
+    product_brand = serializers.CharField(source='product.brand', read_only=True)
+    
     # Computed fields
     display_price = serializers.DecimalField(
         source='get_display_price',
@@ -75,12 +79,13 @@ class ProductVariantSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductVariant
         fields = [
-            'id', 'sku', 'color', 'color_hex', 'material', 'lens_type', 'size',
+            'id', 'product', 'sku', 'product_name', 'product_brand',
+            'color', 'color_hex', 'material', 'lens_type', 'size',
             'lens_width', 'bridge_width', 'temple_length',
             'price', 'sale_price', 'display_price', 'is_on_sale', 'discount_percentage',
             'stock', 'stock_status', 'weight', 'is_active', 'is_default', 'media'
         ]
-        read_only_fields = ['id', 'display_price', 'is_on_sale', 'discount_percentage']
+        read_only_fields = ['id', 'sku', 'display_price', 'is_on_sale', 'discount_percentage']
     
     def get_stock_status(self, obj):
         """Return stock availability status"""
@@ -183,3 +188,34 @@ class ProductReviewSerializer(serializers.ModelSerializer):
         """Auto-set user from request"""
         validated_data['user'] = self.context['request'].user
         return super().create(validated_data)
+
+
+class ProductCreateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for creating a product with an initial variant
+    """
+    initial_variant = serializers.DictField(write_only=True)
+
+    class Meta:
+        model = Product
+        fields = [
+            'id', 'name', 'slug', 'sku_prefix', 'category', 'brand',
+            'short_description', 'description', 'target_gender',
+            'base_price', 'initial_variant'
+        ]
+        read_only_fields = ['id', 'slug', 'sku_prefix']
+
+    def create(self, validated_data):
+        """Create Product and initial Variant"""
+        variant_data = validated_data.pop('initial_variant')
+        
+        # Create Product
+        product = Product.objects.create(**validated_data)
+        
+        # Create Variant
+        ProductVariant.objects.create(
+            product=product,
+            **variant_data
+        )
+        
+        return product

@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'apps.orders',
     'apps.payments',
     'apps.wishlists',
+    'apps.warehouse',  # Inventory management
 ]
 
 # Custom User Model
@@ -201,6 +202,18 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
+# CSRF Trusted Origins (required for cross-origin POST requests)
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+# CSRF Cookie settings for cross-origin requests
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_HTTPONLY = False  # Must be False so JavaScript can read it
+CSRF_COOKIE_SECURE = False  # False for HTTP localhost
+CSRF_USE_SESSIONS = False  # Use cookie-based CSRF
+
 
 # ==============================================================================
 # REDIS CACHE CONFIGURATION
@@ -236,6 +249,8 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 minutes max per task
+
+
 
 
 # ==============================================================================

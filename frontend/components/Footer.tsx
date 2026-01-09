@@ -6,8 +6,56 @@ import { Facebook, Instagram, Mail, MapPin, Phone } from "lucide-react";
 export default function Footer() {
     const currentYear = new Date().getFullYear();
 
+    // SEO: JSON-LD structured data for LocalBusiness
+    const localBusinessJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Optician",
+        name: "Mắt Kính Hàn Quốc Cần Thơ",
+        image: "https://matkinhhanquoc.com/logo.png", // Replace with actual logo URL
+        "@id": "#localbusiness",
+        url: "https://matkinhhanquoc.com",
+        telephone: "+84123456789",
+        priceRange: "$$",
+        address: {
+            "@type": "PostalAddress",
+            streetAddress: "Đường 3/2, Quận Ninh Kiều", // Update with actual address
+            addressLocality: "Cần Thơ",
+            postalCode: "90000",
+            addressCountry: "VN"
+        },
+        geo: {
+            "@type": "GeoCoordinates",
+            latitude: 10.0452, // Approximate coords for Can Tho
+            longitude: 105.7469
+        },
+        openingHoursSpecification: {
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Sunday"
+            ],
+            opens: "08:00",
+            closes: "22:00"
+        },
+        sameAs: [
+            "https://facebook.com",
+            "https://instagram.com"
+        ]
+    };
+
     return (
-        <footer className="relative mt-20 border-t border-tet-gold/20">
+        <footer className="relative mt-20 border-t border-tet-gold/20" role="contentinfo">
+            {/* SEO: JSON-LD structured data */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+            />
+
             {/* Decorative Top Border */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-tet-gold to-transparent opacity-50" />
 
@@ -15,9 +63,9 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {/* Company Info */}
                     <div className="space-y-4">
-                        <h3 className="text-xl font-display font-bold text-gradient-tet">
+                        <h2 className="text-xl font-display font-bold text-gradient-tet">
                             Mắt Kính Hàn Quốc Cần Thơ
-                        </h3>
+                        </h2>
                         <p className="text-text-secondary text-sm leading-relaxed">
                             Mang đến cho bạn bộ sưu tập kính mắt Hàn Quốc cao cấp với phong cách thanh lịch và chất lượng tuyệt vời.
                         </p>
@@ -27,7 +75,7 @@ export default function Footer() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="p-2 rounded-full bg-tet-gold/10 hover:bg-tet-gold/20 text-tet-gold transition-colors"
-                                aria-label="Facebook"
+                                aria-label="Theo dõi Facebook của Mắt Kính Hàn Quốc Cần Thơ"
                             >
                                 <Facebook className="w-5 h-5" />
                             </a>
@@ -36,7 +84,7 @@ export default function Footer() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="p-2 rounded-full bg-tet-gold/10 hover:bg-tet-gold/20 text-tet-gold transition-colors"
-                                aria-label="Instagram"
+                                aria-label="Theo dõi Instagram của Mắt Kính Hàn Quốc Cần Thơ"
                             >
                                 <Instagram className="w-5 h-5" />
                             </a>
@@ -150,8 +198,8 @@ export default function Footer() {
                             </li>
                             <li className="flex items-center gap-2 text-sm text-text-secondary">
                                 <Mail className="w-4 h-4 flex-shrink-0 text-tet-gold" />
-                                <a href="mailto:info@kinhhanquoc.vn" className="hover:text-tet-gold transition-colors">
-                                    info@kinhhanquoc.vn
+                                <a href="mailto:chinguyen23724@gmail.com" className="hover:text-tet-gold transition-colors">
+                                    chinguyen23724@gmail.com
                                 </a>
                             </li>
                         </ul>

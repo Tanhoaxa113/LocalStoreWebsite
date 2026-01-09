@@ -119,6 +119,35 @@
   --card-bg: #2D1B00;
 }
 
+/* Explicit Light Mode - Override media query for consistent theming */
+.light {
+  /* Force Light Mode Backgrounds */
+  --background: #FFFAF0;
+  /* Rice Paper White */
+  --foreground: #000000;
+  /* Jet Black */
+
+  /* Light UI Backgrounds */
+  --tet-cream: #F9F5F0;
+  /* Warm Cream */
+  --tet-silk: #FFF5E6;
+  /* Silk White */
+  --tet-paper: #FFFAF0;
+
+  /* Light Mode Text Colors */
+  --text-primary: #000000;
+  /* Jet Black */
+  --text-secondary: #111111;
+  /* Deep Charcoal */
+  --text-muted: #222222;
+  /* Medium Grey */
+
+  /* UI Elements */
+  --muted: #F5F0E8;
+  --border: #E8DCC8;
+  --card-bg: #FFFFFF;
+}
+
 @theme inline {
   --color-tet-red: var(--tet-red);
   --color-tet-red-light: var(--tet-red-light);
@@ -226,7 +255,7 @@ body {
 }
 
 .text-gradient-gold {
-  @apply bg-gradient-to-r from-tet-gold-dark via-tet-gold to-tet-gold-light bg-clip-text text-transparent;
+  @apply bg-gradient-to-r from-yellow-600 via-amber-500 to-yellow-600 bg-clip-text text-transparent;
 }
 
 .text-gradient-fortune {

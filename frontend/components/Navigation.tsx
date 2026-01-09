@@ -7,7 +7,7 @@ import { Search, ShoppingCart, Menu, X, Heart, Sparkles } from "lucide-react";
 import { useCartStore, useUIStore, useWishlistStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import UserDropdown from "./UserDropdown";
-import ThemeToggle from "./ThemeToggle";
+import ThemeToggle from "./effects/ThemeToggle";
 
 export default function Navigation() {
     const [scrolled, setScrolled] = useState(false);
@@ -44,15 +44,16 @@ export default function Navigation() {
                 <div className="container mx-auto px-4">
                     <div className="flex items-center justify-between h-20">
                         {/* Logo */}
-                        <Link href="/" className="flex items-center space-x-2 group">
+                        {/* SEO: Changed from h1 to span - h1 should only appear once per page in main content */}
+                        <Link href="/" className="flex items-center space-x-2 group" aria-label="Trang chủ - Mắt Kính Hàn Quốc Cần Thơ">
                             <motion.div
                                 className="relative"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                             >
-                                <h1 className="text-lg sm:text-xl md:text-2xl font-display font-bold text-gradient-tet">
+                                <span className="text-lg sm:text-xl md:text-2xl font-display font-bold text-gradient-tet">
                                     Mắt Kính Hàn Quốc Cần Thơ
-                                </h1>
+                                </span>
                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-tet-gold group-hover:w-full transition-all duration-300" />
                             </motion.div>
                         </Link>

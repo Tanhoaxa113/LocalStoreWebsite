@@ -25,8 +25,8 @@ class Payment(models.Model):
     ]
     
     PAYMENT_METHOD_CHOICES = [
-        ('vnpay_qr', 'VNPAY - Quét mã QR'),
-        ('vnpay_card', 'VNPAY - Thẻ ngân hàng'),
+        ('vnpay_qr', 'VNPAY'),
+        ('vnpay_card', 'VNPAY'),
         ('banking', 'Chuyển khoản ngân hàng'),
         ('cod', 'Thanh toán khi nhận hàng'),
     ]
