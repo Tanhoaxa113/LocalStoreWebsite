@@ -42,13 +42,25 @@ class Command(BaseCommand):
             
             # Create 1-4 variants
             num_variants = random.randint(1, 4)
-            for j in range(num_variants):
+            
+            # Generate unique combinations of attributes to avoid SKU collisions
+            # SKU = Prefix + Color + Size. Since Prefix is constant per product, (Color, Size) must be unique.
+            # Create a pool of possible options
+            available_options = []
+            for c in colors:
+                for s in ['S', 'M', 'L']:
+                    available_options.append({'color': c, 'size': s})
+            
+            # Pick 'num_variants' unique combinations
+            selected_options = random.sample(available_options, num_variants)
+            
+            for j, option in enumerate(selected_options):
                 price = Decimal(random.randint(10000000, 15000000))
                 
                 ProductVariant.objects.create(
                     product=product,
-                    color=random.choice(colors),
-                    size=random.choice(['S', 'M', 'L']),
+                    color=option['color'],
+                    size=option['size'],
                     material=random.choice(materials),
                     lens_type=random.choice(lens_types),
                     price=price,
