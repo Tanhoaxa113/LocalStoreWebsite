@@ -146,29 +146,14 @@ export default function Footer() {
                                     Về Chúng Tôi
                                 </Link>
                             </li>
-                            <li>
-                                <Link
-                                    href="/contact"
-                                    className="text-text-secondary hover:text-tet-gold transition-colors text-sm"
-                                >
-                                    Liên Hệ
-                                </Link>
+                            <li className="text-text-secondary hover:text-tet-gold transition-colors text-sm">
+                                Liên Hệ
                             </li>
-                            <li>
-                                <Link
-                                    href="/shipping"
-                                    className="text-text-secondary hover:text-tet-gold transition-colors text-sm"
-                                >
-                                    Chính Sách Giao Hàng
-                                </Link>
+                            <li className="text-text-secondary hover:text-tet-gold transition-colors text-sm">
+                                Chính Sách Giao Hàng
                             </li>
-                            <li>
-                                <Link
-                                    href="/returns"
-                                    className="text-text-secondary hover:text-tet-gold transition-colors text-sm"
-                                >
-                                    Chính Sách Đổi Trả
-                                </Link>
+                            <li className="text-text-secondary hover:text-tet-gold transition-colors text-sm">
+                                Chính Sách Đổi Trả
                             </li>
                         </ul>
                     </div>
@@ -213,12 +198,12 @@ export default function Footer() {
                             © {currentYear} Kính Mắt Hàn Quốc. Tất cả quyền được bảo lưu.
                         </p>
                         <div className="flex gap-6">
-                            <Link href="/privacy" className="hover:text-tet-gold transition-colors">
+                            <div className="hover:text-tet-gold transition-colors">
                                 Chính Sách Riêng Tư
-                            </Link>
-                            <Link href="/terms" className="hover:text-tet-gold transition-colors">
+                            </div>
+                            <div className="hover:text-tet-gold transition-colors">
                                 Điều Khoản Sử Dụng
-                            </Link>
+                            </div>
                         </div>
                     </div>
                 </div>

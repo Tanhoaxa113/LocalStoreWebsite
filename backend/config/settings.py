@@ -27,7 +27,11 @@ SECRET_KEY = 'django-insecure-m+kym(6x8z&sv-7t-iv+1k*e7z6l-q0!2i&$ii%o&3)xafbsp=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = [host.strip() for host in config('ALLOWED_HOSTS', default='*').split(',')]
+ALLOWED_HOSTS.extend(["ttgshopclone.id.vn", "www.ttgshopclone.id.vn", "35.197.128.235", "localhost", "127.0.0.1"])
+
+# Trust Nginx to handle SSL
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Application definition
@@ -109,10 +113,11 @@ DATABASES = {
 }
 
 #Production: PostgreSQL (uncomment and configure when ready)
+#Production: PostgreSQL (uncomment and configure when ready)
 DATABASES = {
     'default': {
         **dj_database_url.config(
-            default=config('DATABASE_URL')),
+            default=config('DATABASE_URL', default='sqlite:///db.sqlite3')),
         'ATOMIC_REQUESTS': True,
     }
 }
@@ -198,6 +203,9 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Next.js default dev server
     "http://127.0.0.1:3000",
+    "https://ttgshopclone.id.vn",
+    "https://www.ttgshopclone.id.vn",
+    "http://35.197.128.235",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -206,12 +214,19 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "http://35.197.128.235",
+    "https://35.197.128.235",
+    "https://ttgshopclone.id.vn",
 ]
+# Add any extra origins from env
+CSRF_TRUSTED_ORIGINS.extend([origin.strip() for origin in config('CSRF_TRUSTED_ORIGINS', default='').split(',') if origin])
 
 # CSRF Cookie settings for cross-origin requests
 CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_HTTPONLY = False  # Must be False so JavaScript can read it
-CSRF_COOKIE_SECURE = False  # False for HTTP localhost
+CSRF_COOKIE_SECURE = False  # False for HTTP localhost, True for HTTPS production usually, but sticking to user setting
+# Note: If accessing via HTTPS, CSRF_COOKIE_SECURE might need to be True, but for IP access it might be mixed.
+# For now, keeping as provided but adding trusted origins which is the main 4.x requirement.
 CSRF_USE_SESSIONS = False  # Use cookie-based CSRF
 
 
@@ -222,7 +237,7 @@ CSRF_USE_SESSIONS = False  # Use cookie-based CSRF
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'LOCATION': config('REDIS_URL', default='redis://127.0.0.1:6379/1'),
     }
 }
 
@@ -241,8 +256,8 @@ SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
 # CELERY CONFIGURATION
 # ==============================================================================
 
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://127.0.0.1:6379/0')
+CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis://127.0.0.1:6379/0')
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -279,10 +294,11 @@ FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:3000')
 # ==============================================================================
 
 # VNPAY Configuration
-VNPAY_TMN_CODE = config('VNPAY_TMN_CODE')
-VNPAY_HASH_SECRET = config('VNPAY_HASH_SECRET')
-VNPAY_PAYMENT_URL = config('VNPAY_PAYMENT_URL')
-VNPAY_RETURN_URL = config('VNPAY_RETURN_URL')
+# VNPAY Configuration
+VNPAY_TMN_CODE = config('VNPAY_TMN_CODE', default='')
+VNPAY_HASH_SECRET = config('VNPAY_HASH_SECRET', default='')
+VNPAY_PAYMENT_URL = config('VNPAY_PAYMENT_URL', default='https://sandbox.vnpayment.vn/paymentv2/vpcpay.html')
+VNPAY_RETURN_URL = config('VNPAY_RETURN_URL', default='http://localhost:3000/checkout/result')
 
 
 # ==============================================================================

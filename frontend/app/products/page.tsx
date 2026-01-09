@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Filter, X, ChevronDown } from "lucide-react";
@@ -9,7 +9,7 @@ import { productsAPI, type Product } from "@/lib/api";
 import { useFilterStore, useCartStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
-export default function ProductsPage() {
+function ProductsContent() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [showFilters, setShowFilters] = useState(false);
@@ -108,7 +108,7 @@ export default function ProductsPage() {
 
                         <button
                             onClick={() => setShowFilters(!showFilters)}
-                            className="flex items-center gap-2 px-4 py-2 bg-winter-deep rounded-lg hover:bg-winter-night transition-colors group"
+                            className="flex items-center gap-2 px-4 py-2 bg-card rounded-lg hover:bg-muted/50 transition-colors group border border-border"
                         >
                             <Filter className="w-5 h-5 text-tet-gold" />
                             <span className="hidden sm:inline font-bold text-gradient-product">Bộ Lọc</span>
@@ -222,12 +222,12 @@ export default function ProductsPage() {
                         {loading ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {[...Array(6)].map((_, i) => (
-                                    <div key={i} className="h-96 bg-winter-sky animate-pulse rounded-xl" />
+                                    <div key={i} className="h-96 bg-muted/20 animate-pulse rounded-xl" />
                                 ))}
                             </div>
                         ) : products.length === 0 ? (
                             <div className="text-center py-20">
-                                <p className="text-xl text-winter-stone mb-4">Không tìm thấy sản phẩm</p>
+                                <p className="text-xl text-text-muted mb-4">Không tìm thấy sản phẩm</p>
                                 <button
                                     onClick={() => filters.clearFilters()}
                                     className="text-tet-gold hover:underline"
@@ -292,14 +292,22 @@ function FilterCheckbox({
                 type="checkbox"
                 checked={checked}
                 onChange={onChange}
-                className="w-4 h-4 rounded border-winter-stone text-tet-gold focus:ring-tet-gold"
+                className="w-4 h-4 rounded border-border text-tet-gold focus:ring-tet-gold"
             />
             <span className={cn(
                 "text-sm transition-colors",
-                gradient ? "text-gradient-product font-medium" : "text-winter-deep group-hover:text-tet-gold"
+                gradient ? "text-gradient-product font-medium" : "text-text-secondary group-hover:text-tet-gold"
             )}>
                 {label}
             </span>
         </label>
+    );
+}
+
+export default function ProductsPage() {
+    return (
+        <Suspense fallback={<div className="container py-8 text-center">Loading products...</div>}>
+            <ProductsContent />
+        </Suspense>
     );
 }

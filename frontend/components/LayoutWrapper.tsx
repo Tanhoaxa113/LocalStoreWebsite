@@ -3,6 +3,8 @@
 import { usePathname } from "next/navigation";
 import Navigation from "./Navigation";
 import Footer from "./Footer";
+import { useUIStore } from "@/lib/store";
+import { useEffect } from "react";
 
 interface LayoutWrapperProps {
     children: React.ReactNode;
@@ -10,6 +12,15 @@ interface LayoutWrapperProps {
 
 export default function LayoutWrapper({ children }: LayoutWrapperProps) {
     const pathname = usePathname();
+    const { theme } = useUIStore();
+
+    // Sync theme with document class
+    useEffect(() => {
+        const root = window.document.documentElement;
+        // Remove both to ensure clean slate, although usually we just toggle
+        root.classList.remove('light', 'dark');
+        root.classList.add(theme);
+    }, [theme]);
 
     // Pages where we don't want navbar/footer
     const noLayoutPages = ["/auth/login", "/auth/register"];
