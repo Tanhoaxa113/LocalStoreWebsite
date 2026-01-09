@@ -37,6 +37,7 @@ class OrderService:
         """
         from apps.orders.models import Order, OrderItem, ShippingAddress, OrderStatus, Voucher
         from apps.orders.tasks import process_order_async
+        from apps.products.models import ProductVariant
         
         if not cart_items:
             raise ValueError("Cannot create order from empty cart")
@@ -47,7 +48,21 @@ class OrderService:
             items_data = []
             
             for cart_item in cart_items:
-                variant = cart_item.variant
+                # CRITICAL FIX: Lock the variant row to prevent race conditions
+                # This ensures no other transaction can modify this variant until we are done
+                try:
+                    variant = ProductVariant.objects.select_for_update().get(id=cart_item.variant.id)
+                except ProductVariant.DoesNotExist:
+                    raise ValueError(f"Sản phẩm {cart_item.variant.sku} không tồn tại")
+                
+                # Check stock synchronously inside the lock
+                if variant.stock < cart_item.quantity:
+                    raise ValueError(f"Sản phẩm {variant.name} không đủ hàng (còn {variant.stock})")
+                
+                # Decrement stock immediately
+                variant.stock -= cart_item.quantity
+                variant.save(update_fields=['stock'])
+                
                 unit_price = variant.get_display_price()
                 quantity = cart_item.quantity
                 total_price = unit_price * quantity

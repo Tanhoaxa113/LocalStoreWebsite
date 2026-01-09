@@ -1,3 +1,5 @@
+import random
+import string
 from django.db import models
 from django.utils.text import slugify
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -34,15 +36,19 @@ class Category(models.Model):
             models.Index(fields=['slug']),
             models.Index(fields=['is_active', 'display_order']),
         ]
-    
+        
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
+            
         super().save(*args, **kwargs)
     
     def __str__(self):
         return self.name
 
+
+import random
+import string
 
 class Product(models.Model):
     """Main product model - represents a product line (e.g., 'Ray-Ban Aviator')"""
@@ -50,7 +56,7 @@ class Product(models.Model):
     # Basic Information
     name = models.CharField(max_length=300, db_index=True)
     slug = models.SlugField(max_length=300, unique=True, blank=True)
-    sku_prefix = models.CharField(max_length=50, unique=True, help_text="Prefix for variant SKUs")
+    sku_prefix = models.CharField(max_length=50, unique=True, help_text="Prefix for variant SKUs", blank=True)
     
     # Categorization
     category = models.ForeignKey(
@@ -115,6 +121,14 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
+            
+        if not self.sku_prefix:
+            # Generate SKU prefix: Brand(3) + Name(3) + Random(3)
+            brand_code = slugify(self.brand)[:3].upper()
+            name_code = slugify(self.name)[:3].upper()
+            random_code = ''.join(random.choices(string.digits, k=3))
+            self.sku_prefix = f"{brand_code}-{name_code}-{random_code}"
+            
         super().save(*args, **kwargs)
     
     def __str__(self):
@@ -156,7 +170,7 @@ class ProductVariant(models.Model):
     )
     
     # Unique Identifier
-    sku = models.CharField(max_length=100, unique=True, db_index=True)
+    sku = models.CharField(max_length=100, unique=True, db_index=True, blank=True)
     
     # Variant Attributes (specific to eyewear)
     color = models.CharField(max_length=50, help_text="Frame color (e.g., Black, Gold, Tortoise)")
@@ -271,6 +285,18 @@ class ProductVariant(models.Model):
                 name='unique_default_variant_per_product'
             )
         ]
+    
+    def save(self, *args, **kwargs):
+        if not self.sku and self.product:
+            # Generate SKU: Prefix + Color + Size
+            # Ensure product has sku_prefix, if not save it first
+            if not self.product.sku_prefix:
+                self.product.save()
+                
+            color_code = slugify(self.color)[:3].upper()
+            self.sku = f"{self.product.sku_prefix}-{color_code}-{self.size}"
+            
+        super().save(*args, **kwargs)
     
     def __str__(self):
         return f"{self.product.name} - {self.color} {self.size} ({self.sku})"

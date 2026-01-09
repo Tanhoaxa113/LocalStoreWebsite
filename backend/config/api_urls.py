@@ -34,4 +34,3 @@ urlpatterns = [
     path('payments/', include('apps.payments.urls')),  # Payment endpoints
     path('warehouse/', include('apps.warehouse.urls')),  # Inventory management endpoints
 ]
-

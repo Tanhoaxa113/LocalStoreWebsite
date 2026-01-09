@@ -78,7 +78,8 @@ export default function FeaturedProducts() {
     }
 
     return (
-        <section className="py-28 relative overflow-hidden">
+        // SEO: Added aria-label for accessibility
+        <section className="py-28 relative overflow-hidden" aria-label="Sản phẩm nổi bật">
             {/* Decorative background elements removed for unified background */}
 
             <div className="container mx-auto px-4 md:px-6 relative z-10">

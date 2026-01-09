@@ -124,6 +124,7 @@ export default function ProductCard({ product, onAddToCart, index = 0 }: Product
                         </div>
 
                         {/* Wishlist Button */}
+                        {/* SEO: Added aria-label for accessibility */}
                         <button
                             onClick={async (e) => {
                                 e.preventDefault();
@@ -157,6 +158,7 @@ export default function ProductCard({ product, onAddToCart, index = 0 }: Product
                                 "bg-background/80 backdrop-blur-sm hover:bg-background",
                                 isWishlisted ? "text-tet-red" : "text-muted hover:text-tet-red"
                             )}
+                            aria-label={isWishlisted ? "Xóa khỏi danh sách yêu thích" : "Thêm vào danh sách yêu thích"}
                         >
                             <Heart
                                 className={cn("w-4 h-4 sm:w-5 sm:h-5", isWishlisted && "fill-current")}

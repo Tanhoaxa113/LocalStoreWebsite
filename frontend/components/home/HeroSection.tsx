@@ -20,7 +20,10 @@ export default function HeroSection() {
     };
 
     return (
-        <section className="relative w-full min-h-[95vh] flex items-center justify-center overflow-hidden">
+        <section
+            className="relative w-full min-h-[95vh] flex items-center justify-center overflow-hidden"
+            aria-label="Giới thiệu cửa hàng kính Hàn Quốc Cần Thơ"
+        >
             {/* Background Decor - Semantic: aria-hidden since it's decorative - Removed for unified background */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
             </div>

@@ -92,16 +92,73 @@ export default function ProductDetailPage() {
     const stockStatus = selectedVariant ? getStockStatus(selectedVariant.stock_status) : null;
     const isWishlisted = isInWishlist(product.id);
 
+    // SEO: JSON-LD structured data for Product and BreadcrumbList
+    const productJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name: product.name,
+        description: product.short_description || product.description?.replace(/<[^>]*>/g, '').substring(0, 200),
+        image: product.thumbnail,
+        brand: {
+            "@type": "Brand",
+            name: product.brand,
+        },
+        offers: {
+            "@type": "Offer",
+            url: `/products/${product.slug}`,
+            priceCurrency: "VND",
+            price: selectedVariant?.display_price || product.base_price,
+            availability: product.in_stock
+                ? "https://schema.org/InStock"
+                : "https://schema.org/OutOfStock",
+        },
+    };
+
+    const breadcrumbJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+            {
+                "@type": "ListItem",
+                position: 1,
+                name: "Trang chủ",
+                item: "/",
+            },
+            {
+                "@type": "ListItem",
+                position: 2,
+                name: "Sản phẩm",
+                item: "/products",
+            },
+            {
+                "@type": "ListItem",
+                position: 3,
+                name: product.name,
+            },
+        ],
+    };
+
     return (
-        <div className="min-h-screen pb-8">
-            <div className="container">
+        // SEO: Changed from div to main with article for semantic structure
+        <main className="min-h-screen pb-8">
+            {/* SEO: JSON-LD structured data */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+            />
+
+            <article className="container">
                 {/* Breadcrumb */}
-                <nav className="flex items-center gap-2 text-sm text-winter-stone mb-8">
-                    <Link href="/" className="hover:text-tet-gold transition-colors">Home</Link>
-                    <span>/</span>
-                    <Link href="/products" className="hover:text-tet-gold transition-colors">Products</Link>
-                    <span>/</span>
-                    <span className="text-foreground">{product.name}</span>
+                <nav className="flex items-center gap-2 text-sm text-winter-stone mb-8" aria-label="Đường dẫn">
+                    <Link href="/" className="hover:text-tet-gold transition-colors">Trang chủ</Link>
+                    <span aria-hidden="true">/</span>
+                    <Link href="/products" className="hover:text-tet-gold transition-colors">Sản phẩm</Link>
+                    <span aria-hidden="true">/</span>
+                    <span className="text-foreground" aria-current="page">{product.name}</span>
                 </nav>
 
                 {/* Product Content */}
@@ -170,6 +227,7 @@ export default function ProductDetailPage() {
                                     {product.name}
                                 </h1>
                             </div>
+                            {/* SEO: Added aria-label for accessibility */}
                             <button
                                 onClick={() => toggleItem(product.id)}
                                 className={cn(
@@ -178,6 +236,7 @@ export default function ProductDetailPage() {
                                         ? "border-tet-red text-tet-red bg-tet-red/10"
                                         : "border-winter-frost text-winter-stone hover:border-tet-red hover:text-tet-red"
                                 )}
+                                aria-label={isWishlisted ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}
                             >
                                 <Heart className={cn("w-6 h-6", isWishlisted && "fill-current")} />
                             </button>
@@ -288,6 +347,7 @@ export default function ProductDetailPage() {
                                 <button
                                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                                     className="w-10 h-10 rounded-lg border border-winter-frost hover:border-tet-gold transition-colors flex items-center justify-center text-lg font-semibold"
+                                    aria-label="Giảm số lượng"
                                 >
                                     −
                                 </button>
@@ -295,6 +355,7 @@ export default function ProductDetailPage() {
                                 <button
                                     onClick={() => setQuantity(quantity + 1)}
                                     className="w-10 h-10 rounded-lg border border-winter-frost hover:border-tet-gold transition-colors flex items-center justify-center text-lg font-semibold"
+                                    aria-label="Tăng số lượng"
                                 >
                                     +
                                 </button>
@@ -319,7 +380,7 @@ export default function ProductDetailPage() {
                         </motion.button>
                     </div>
                 </div>
-            </div>
-        </div>
+            </article>
+        </main>
     );
 }

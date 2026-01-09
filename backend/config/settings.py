@@ -251,6 +251,8 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 minutes max per task
 
 
+
+
 # ==============================================================================
 # EMAIL CONFIGURATION (for order notifications, password reset, etc.)
 # ==============================================================================

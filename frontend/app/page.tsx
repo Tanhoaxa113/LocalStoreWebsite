@@ -11,11 +11,12 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen">
+    // SEO: Changed from div to main for semantic structure
+    <main className="flex flex-col min-h-screen" role="main">
       <HeroSection />
       <FeaturedProducts />
       <StorySection />
       <CoverflowGallery />
-    </div>
+    </main>
   );
 }

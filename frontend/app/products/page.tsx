@@ -71,7 +71,8 @@ export default function ProductsPage() {
     };
 
     return (
-        <div className="min-h-screen pb-16">
+        // SEO: Changed from div to main for semantic structure
+        <main className="min-h-screen pb-16">
             <div className="container">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-8">
@@ -248,7 +249,7 @@ export default function ProductsPage() {
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
     );
 }
 

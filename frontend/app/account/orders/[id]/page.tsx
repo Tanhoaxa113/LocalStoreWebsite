@@ -1,15 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ArrowLeft, MapPin, Package, CreditCard, ShoppingBag, AlertCircle } from 'lucide-react';
+import { ArrowLeft, MapPin, Package, CreditCard, ShoppingBag, AlertCircle, Wifi, WifiOff } from 'lucide-react';
 import Link from 'next/link';
 import DashboardLayout from '@/components/DashboardLayout';
 import { OrderAPI, OrderDetail } from '@/lib/api/orders';
 import CancelOrderModal from '@/components/order/CancelOrderModal';
 import RefundRequestModal from '@/components/order/RefundRequestModal';
 import PaymentExpirationTimer from '@/components/order/PaymentExpirationTimer';
+import { useOrderUpdates, OrderStatusUpdateMessage } from '@/lib/useWebSocket';
 
 const STATUS_COLORS: Record<string, string> = {
     PENDING: 'bg-yellow-100 text-yellow-800',
@@ -30,6 +31,7 @@ export default function OrderDetailsPage() {
     const [order, setOrder] = useState<OrderDetail | null>(null);
     const [loading, setLoading] = useState(true);
     const [errorMsg, setErrorMsg] = useState('');
+    const [statusUpdateFlash, setStatusUpdateFlash] = useState(false);
 
     // Modal states
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
@@ -37,6 +39,24 @@ export default function OrderDetailsPage() {
 
     // Processing states
     const [isRetryingPayment, setIsRetryingPayment] = useState(false);
+
+    // WebSocket: Real-time order status updates
+    const handleStatusUpdate = useCallback((message: OrderStatusUpdateMessage) => {
+        // Only update if this is the order we're viewing
+        if (order && message.order_id === order.id.toString()) {
+            setOrder(prev => prev ? {
+                ...prev,
+                status: message.new_status,
+                status_display: message.status_display,
+            } : null);
+
+            // Flash effect to highlight the change
+            setStatusUpdateFlash(true);
+            setTimeout(() => setStatusUpdateFlash(false), 2000);
+        }
+    }, [order]);
+
+    const { connectionStatus } = useOrderUpdates(handleStatusUpdate);
 
     useEffect(() => {
         if (params.id) {

@@ -81,7 +81,8 @@ class ImportNoteCreateSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = ImportNote
-        fields = ['notes', 'items']
+        fields = ['id', 'notes', 'items']
+        read_only_fields = ['id']
     
     def validate_items(self, value):
         if not value:

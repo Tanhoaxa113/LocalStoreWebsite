@@ -39,7 +39,7 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset.order_by('display_order', 'name')
 
 
-class ProductViewSet(viewsets.ReadOnlyModelViewSet):
+class ProductViewSet(viewsets.ModelViewSet):
     """
     ViewSet for Products
     Provides list, retrieve, and filtering
@@ -54,6 +54,9 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     
     def get_serializer_class(self):
         """Use different serializers for list and detail views"""
+        if self.action in ['create', 'update', 'partial_update']:
+            from .serializers import ProductCreateSerializer
+            return ProductCreateSerializer
         if self.action == 'retrieve':
             return ProductDetailSerializer
         return ProductListSerializer
@@ -140,7 +143,7 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(serializer.data)
 
 
-class ProductVariantViewSet(viewsets.ReadOnlyModelViewSet):
+class ProductVariantViewSet(viewsets.ModelViewSet):
     """
     ViewSet for Product Variants
     Allows filtering variants by product and searching by SKU, product name, or brand
