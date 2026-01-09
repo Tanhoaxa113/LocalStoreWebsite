@@ -109,10 +109,11 @@ DATABASES = {
 }
 
 #Production: PostgreSQL (uncomment and configure when ready)
+#Production: PostgreSQL (uncomment and configure when ready)
 DATABASES = {
     'default': {
         **dj_database_url.config(
-            default=config('DATABASE_URL')),
+            default=config('DATABASE_URL', default='sqlite:///db.sqlite3')),
         'ATOMIC_REQUESTS': True,
     }
 }
@@ -206,12 +207,19 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "http://35.197.128.235",
+    "https://35.197.128.235",
+    "https://ttgshopclone.id.vn",
 ]
+# Add any extra origins from env
+CSRF_TRUSTED_ORIGINS.extend([origin.strip() for origin in config('CSRF_TRUSTED_ORIGINS', default='').split(',') if origin])
 
 # CSRF Cookie settings for cross-origin requests
 CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_HTTPONLY = False  # Must be False so JavaScript can read it
-CSRF_COOKIE_SECURE = False  # False for HTTP localhost
+CSRF_COOKIE_SECURE = False  # False for HTTP localhost, True for HTTPS production usually, but sticking to user setting
+# Note: If accessing via HTTPS, CSRF_COOKIE_SECURE might need to be True, but for IP access it might be mixed.
+# For now, keeping as provided but adding trusted origins which is the main 4.x requirement.
 CSRF_USE_SESSIONS = False  # Use cookie-based CSRF
 
 
