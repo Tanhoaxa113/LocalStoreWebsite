@@ -146,29 +146,14 @@ export default function Footer() {
                                     Về Chúng Tôi
                                 </Link>
                             </li>
-                            <li>
-                                <Link
-                                    href="/contact"
-                                    className="text-text-secondary hover:text-tet-gold transition-colors text-sm"
-                                >
-                                    Liên Hệ
-                                </Link>
+                            <li className="text-text-secondary hover:text-tet-gold transition-colors text-sm">
+                                Liên Hệ
                             </li>
-                            <li>
-                                <Link
-                                    href="/shipping"
-                                    className="text-text-secondary hover:text-tet-gold transition-colors text-sm"
-                                >
-                                    Chính Sách Giao Hàng
-                                </Link>
+                            <li className="text-text-secondary hover:text-tet-gold transition-colors text-sm">
+                                Chính Sách Giao Hàng
                             </li>
-                            <li>
-                                <Link
-                                    href="/returns"
-                                    className="text-text-secondary hover:text-tet-gold transition-colors text-sm"
-                                >
-                                    Chính Sách Đổi Trả
-                                </Link>
+                            <li className="text-text-secondary hover:text-tet-gold transition-colors text-sm">
+                                Chính Sách Đổi Trả
                             </li>
                         </ul>
                     </div>
