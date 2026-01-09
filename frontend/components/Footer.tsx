@@ -198,12 +198,12 @@ export default function Footer() {
                             © {currentYear} Kính Mắt Hàn Quốc. Tất cả quyền được bảo lưu.
                         </p>
                         <div className="flex gap-6">
-                            <Link href="/privacy" className="hover:text-tet-gold transition-colors">
+                            <div className="hover:text-tet-gold transition-colors">
                                 Chính Sách Riêng Tư
-                            </Link>
-                            <Link href="/terms" className="hover:text-tet-gold transition-colors">
+                            </div>
+                            <div className="hover:text-tet-gold transition-colors">
                                 Điều Khoản Sử Dụng
-                            </Link>
+                            </div>
                         </div>
                     </div>
                 </div>
