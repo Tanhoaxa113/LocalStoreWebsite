@@ -230,7 +230,7 @@ CSRF_USE_SESSIONS = False  # Use cookie-based CSRF
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'LOCATION': config('REDIS_URL', default='redis://127.0.0.1:6379/1'),
     }
 }
 
@@ -249,8 +249,8 @@ SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
 # CELERY CONFIGURATION
 # ==============================================================================
 
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://127.0.0.1:6379/0')
+CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis://127.0.0.1:6379/0')
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
