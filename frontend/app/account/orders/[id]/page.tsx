@@ -10,7 +10,6 @@ import { OrderAPI, OrderDetail } from '@/lib/api/orders';
 import CancelOrderModal from '@/components/order/CancelOrderModal';
 import RefundRequestModal from '@/components/order/RefundRequestModal';
 import PaymentExpirationTimer from '@/components/order/PaymentExpirationTimer';
-import { useOrderUpdates, OrderStatusUpdateMessage } from '@/lib/useWebSocket';
 
 const STATUS_COLORS: Record<string, string> = {
     PENDING: 'bg-yellow-100 text-yellow-800',
@@ -40,23 +39,7 @@ export default function OrderDetailsPage() {
     // Processing states
     const [isRetryingPayment, setIsRetryingPayment] = useState(false);
 
-    // WebSocket: Real-time order status updates
-    const handleStatusUpdate = useCallback((message: OrderStatusUpdateMessage) => {
-        // Only update if this is the order we're viewing
-        if (order && message.order_id === order.id.toString()) {
-            setOrder(prev => prev ? {
-                ...prev,
-                status: message.new_status,
-                status_display: message.status_display,
-            } : null);
-
-            // Flash effect to highlight the change
-            setStatusUpdateFlash(true);
-            setTimeout(() => setStatusUpdateFlash(false), 2000);
-        }
-    }, [order]);
-
-    const { connectionStatus } = useOrderUpdates(handleStatusUpdate);
+    // WebSocket: Real-time order status updateseStatusUpdate);
 
     useEffect(() => {
         if (params.id) {
