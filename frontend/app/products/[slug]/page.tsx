@@ -59,13 +59,13 @@ export default function ProductDetailPage() {
             <div className="min-h-screen pb-8">
                 <div className="container">
                     <div className="animate-pulse space-y-8">
-                        <div className="h-8 bg-winter-sky rounded w-1/4" />
+                        <div className="h-8 bg-muted/20 rounded w-1/4" />
                         <div className="grid md:grid-cols-2 gap-12">
-                            <div className="aspect-square bg-winter-sky rounded-xl" />
+                            <div className="aspect-square bg-muted/20 rounded-xl" />
                             <div className="space-y-6">
-                                <div className="h-12 bg-winter-sky rounded" />
-                                <div className="h-6 bg-winter-sky rounded w-3/4" />
-                                <div className="h-24 bg-winter-sky rounded" />
+                                <div className="h-12 bg-muted/20 rounded" />
+                                <div className="h-6 bg-muted/20 rounded w-3/4" />
+                                <div className="h-24 bg-muted/20 rounded" />
                             </div>
                         </div>
                     </div>
@@ -78,7 +78,7 @@ export default function ProductDetailPage() {
         return (
             <div className="min-h-screen pb-8 flex items-center justify-center">
                 <div className="text-center">
-                    <h1 className="text-2xl font-display font-bold text-winter-deep mb-4">
+                    <h1 className="text-2xl font-display font-bold text-foreground mb-4">
                         Product not found
                     </h1>
                     <Link href="/products" className="text-tet-gold hover:underline">
@@ -153,7 +153,7 @@ export default function ProductDetailPage() {
 
             <article className="container">
                 {/* Breadcrumb */}
-                <nav className="flex items-center gap-2 text-sm text-winter-stone mb-8" aria-label="Đường dẫn">
+                <nav className="flex items-center gap-2 text-sm text-text-muted mb-8" aria-label="Đường dẫn">
                     <Link href="/" className="hover:text-tet-gold transition-colors">Trang chủ</Link>
                     <span aria-hidden="true">/</span>
                     <Link href="/products" className="hover:text-tet-gold transition-colors">Sản phẩm</Link>
@@ -170,7 +170,7 @@ export default function ProductDetailPage() {
                             key={selectedImage}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="aspect-square bg-winter-ice rounded-2xl overflow-hidden relative"
+                            className="aspect-square bg-muted/50 rounded-2xl overflow-hidden relative"
                         >
                             {product.media[selectedImage] ? (
                                 <Image
@@ -181,7 +181,7 @@ export default function ProductDetailPage() {
                                 />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center">
-                                    <span className="text-winter-stone">No image available</span>
+                                    <span className="text-text-muted">No image available</span>
                                 </div>
                             )}
                         </motion.div>
@@ -197,7 +197,7 @@ export default function ProductDetailPage() {
                                             "aspect-square rounded-lg overflow-hidden border-2 transition-all",
                                             selectedImage === index
                                                 ? "border-tet-gold shadow-lg"
-                                                : "border-transparent hover:border-winter-frost"
+                                                : "border-transparent hover:border-tet-gold/50"
                                         )}
                                     >
                                         {media.thumbnail_url && (
@@ -234,7 +234,7 @@ export default function ProductDetailPage() {
                                     "p-3 rounded-full border-2 transition-all",
                                     isWishlisted
                                         ? "border-tet-red text-tet-red bg-tet-red/10"
-                                        : "border-winter-frost text-winter-stone hover:border-tet-red hover:text-tet-red"
+                                        : "border-border text-text-muted hover:border-tet-red hover:text-tet-red"
                                 )}
                                 aria-label={isWishlisted ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}
                             >
@@ -249,7 +249,7 @@ export default function ProductDetailPage() {
                                     <span className="text-3xl font-bold text-gradient-product">
                                         {formatPrice(selectedVariant.sale_price!)}
                                     </span>
-                                    <span className="text-xl text-winter-stone line-through">
+                                    <span className="text-xl text-text-muted line-through">
                                         {formatPrice(selectedVariant.price)}
                                     </span>
                                     <span className="px-3 py-1 bg-tet-red text-white text-sm font-semibold rounded-full">
@@ -274,7 +274,7 @@ export default function ProductDetailPage() {
                         )}
 
                         {/* Description */}
-                        <div className="prose prose-sm max-w-none prose-headings:text-foreground prose-p:text-winter-deep prose-ul:text-winter-deep prose-li:text-winter-deep">
+                        <div className="prose prose-sm max-w-none prose-headings:text-foreground prose-p:text-foreground prose-ul:text-foreground prose-li:text-foreground">
                             <div
                                 dangerouslySetInnerHTML={{ __html: product.description }}
                             />
@@ -370,7 +370,7 @@ export default function ProductDetailPage() {
                                 "w-full py-4 rounded-full font-semibold text-lg shadow-lg transition-all flex items-center justify-center gap-2",
                                 selectedVariant && selectedVariant.stock >= quantity
                                     ? "bg-tet-red text-[#F5D562] hover:bg-tet-red-dark hover:shadow-xl"
-                                    : "bg-winter-stone/20 text-winter-stone cursor-not-allowed"
+                                    : "bg-muted text-text-muted cursor-not-allowed"
                             )}
                             whileHover={selectedVariant && selectedVariant.stock >= quantity ? { scale: 1.02 } : {}}
                             whileTap={selectedVariant && selectedVariant.stock >= quantity ? { scale: 0.98 } : {}}

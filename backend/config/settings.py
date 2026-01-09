@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-m+kym(6x8z&sv-7t-iv+1k*e7z6l-q0!2i&$ii%o&3)xafbsp=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = [host.strip() for host in config('ALLOWED_HOSTS', default='*').split(',')]
 
 
 # Application definition
@@ -279,10 +279,11 @@ FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:3000')
 # ==============================================================================
 
 # VNPAY Configuration
-VNPAY_TMN_CODE = config('VNPAY_TMN_CODE')
-VNPAY_HASH_SECRET = config('VNPAY_HASH_SECRET')
-VNPAY_PAYMENT_URL = config('VNPAY_PAYMENT_URL')
-VNPAY_RETURN_URL = config('VNPAY_RETURN_URL')
+# VNPAY Configuration
+VNPAY_TMN_CODE = config('VNPAY_TMN_CODE', default='')
+VNPAY_HASH_SECRET = config('VNPAY_HASH_SECRET', default='')
+VNPAY_PAYMENT_URL = config('VNPAY_PAYMENT_URL', default='https://sandbox.vnpayment.vn/paymentv2/vpcpay.html')
+VNPAY_RETURN_URL = config('VNPAY_RETURN_URL', default='http://localhost:3000/checkout/result')
 
 
 # ==============================================================================
