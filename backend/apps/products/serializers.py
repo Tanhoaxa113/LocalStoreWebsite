@@ -58,6 +58,10 @@ class ProductVariantSerializer(serializers.ModelSerializer):
     # Include variant-specific media
     media = ProductMediaSerializer(many=True, read_only=True)
     
+    # Product information for better UX in admin
+    product_name = serializers.CharField(source='product.name', read_only=True)
+    product_brand = serializers.CharField(source='product.brand', read_only=True)
+    
     # Computed fields
     display_price = serializers.DecimalField(
         source='get_display_price',
@@ -75,7 +79,8 @@ class ProductVariantSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductVariant
         fields = [
-            'id', 'sku', 'color', 'color_hex', 'material', 'lens_type', 'size',
+            'id', 'sku', 'product_name', 'product_brand',
+            'color', 'color_hex', 'material', 'lens_type', 'size',
             'lens_width', 'bridge_width', 'temple_length',
             'price', 'sale_price', 'display_price', 'is_on_sale', 'discount_percentage',
             'stock', 'stock_status', 'weight', 'is_active', 'is_default', 'media'

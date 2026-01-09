@@ -228,6 +228,7 @@ def deduct_inventory(order):
     Raises InsufficientStockError if stock becomes unavailable during deduction
     """
     from apps.products.models import ProductVariant
+    from apps.warehouse.models import InventoryLog
     
     with transaction.atomic():
         # Process each order item
@@ -247,9 +248,24 @@ def deduct_inventory(order):
                     f"Available: {variant.stock}, Requested: {item.quantity}"
                 )
             
+            # Record stock before deduction
+            stock_before = variant.stock
+            
             # Deduct stock
             variant.stock -= item.quantity
             variant.save(update_fields=['stock', 'updated_at'])
+            
+            # Create inventory log for ORDER deduction
+            InventoryLog.log_transaction(
+                variant=variant,
+                quantity_change=-item.quantity,  # Negative for deduction
+                transaction_type='ORDER',
+                transaction_id=order.order_number,
+                stock_before=stock_before,
+                stock_after=variant.stock,
+                created_by=order.user,
+                note=f"Order placed"
+            )
             
             logger.info(
                 f"Deducted {item.quantity} units of {variant.sku}. "
@@ -257,6 +273,7 @@ def deduct_inventory(order):
             )
     
     logger.info(f"Inventory deducted successfully for order {order.id}")
+
 
 
 def validate_and_apply_vouchers(order):

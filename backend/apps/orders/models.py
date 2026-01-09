@@ -412,6 +412,7 @@ class Order(models.Model):
         Multiple orders being canceled simultaneously won't cause stock inconsistencies
         """
         from apps.products.models import ProductVariant
+        from apps.warehouse.models import InventoryLog
         from django.db import transaction
         
         with transaction.atomic():
@@ -426,14 +427,28 @@ class Order(models.Model):
                     id=item.variant.id
                 )
                 
+                # Record stock before restoration
+                stock_before = variant.stock
+                
                 # Restore stock
-                old_stock = variant.stock
                 variant.stock += item.quantity
                 variant.save(update_fields=['stock', 'updated_at'])
                 
+                # Create inventory log for REFUND
+                InventoryLog.log_transaction(
+                    variant=variant,
+                    quantity_change=item.quantity,  # Positive for restoration
+                    transaction_type='REFUND',
+                    transaction_id=self.order_number,
+                    stock_before=stock_before,
+                    stock_after=variant.stock,
+                    created_by=None,  # System action
+                    note=f"Order {'canceled' if self.status == 'CANCELED' else 'refunded'}"
+                )
+                
                 logger.info(
                     f"Restored inventory for order {self.order_number}: "
-                    f"{variant.sku} stock {old_stock} -> {variant.stock} (+{item.quantity})"
+                    f"{variant.sku} stock {stock_before} -> {variant.stock} (+{item.quantity})"
                 )
         
         logger.info(f"Inventory fully restored for order {self.order_number}")

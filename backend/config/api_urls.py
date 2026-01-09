@@ -32,5 +32,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('auth/', include('apps.users.urls')),  # Authentication endpoints
     path('payments/', include('apps.payments.urls')),  # Payment endpoints
+    path('warehouse/', include('apps.warehouse.urls')),  # Inventory management endpoints
 ]
 

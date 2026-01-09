@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'apps.orders',
     'apps.payments',
     'apps.wishlists',
+    'apps.warehouse',  # Inventory management
 ]
 
 # Custom User Model
