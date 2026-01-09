@@ -1,0 +1,23 @@
+# *
+User-agent: *
+Allow: /
+
+# *
+User-agent: *
+Disallow: /fadmin
+Disallow: /fadmin/*
+Disallow: /account
+Disallow: /account/*
+Disallow: /auth
+Disallow: /auth/*
+Disallow: /cart
+Disallow: /checkout
+Disallow: /wishlist
+Disallow: /payment
+Disallow: /payment/*
+
+# Host
+Host: https://ttgshopclone.id.vn
+
+# Sitemaps
+Sitemap: https://ttgshopclone.id.vn/sitemap.xml
