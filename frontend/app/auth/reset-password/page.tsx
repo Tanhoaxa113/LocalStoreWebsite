@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Button from "@/components/ui/Button";
 import { resetPassword } from "@/lib/api/auth";
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -76,7 +76,6 @@ export default function ResetPasswordPage() {
                             animate={{ scale: 1 }}
                             className="text-6xl mb-4"
                         >
-                            🔐
                         </motion.div>
                         <h1 className="text-3xl font-display font-bold text-gradient-tet mb-2">
                             Đặt Lại Mật Khẩu
@@ -94,7 +93,7 @@ export default function ResetPasswordPage() {
                             className="text-center space-y-6"
                         >
                             <div className="p-6 bg-success/10 border-2 border-success rounded-lg">
-                                <div className="text-5xl mb-4">✅</div>
+                                <div className="text-5xl mb-4"></div>
                                 <h2 className="text-xl font-bold text-success mb-2">
                                     Đặt lại mật khẩu thành công!
                                 </h2>
@@ -220,5 +219,13 @@ export default function ResetPasswordPage() {
                 </motion.div>
             </motion.div>
         </div>
+    );
+}
+
+export default function ResetPasswordPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+            <ResetPasswordContent />
+        </Suspense>
     );
 }
